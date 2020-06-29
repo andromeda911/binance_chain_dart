@@ -35,6 +35,12 @@ class HttpApiClient {
     return APIResponse(
         resp.statusCode, Account.fromJson(json.decode(resp.body)));
   }
+
+  Future<APIResponse> getNodeInfo() async {
+    var resp = await _httpClient.get(_createFullPath('node-info'));
+    return APIResponse(
+        resp.statusCode, NodeInfo.fromJson(json.decode(resp.body)));
+  }
 }
 
 class APIResponse {
