@@ -85,21 +85,19 @@ class Signature {
     return Uint8List.fromList(to_json().codeUnits);
   }
 
-  Uint8List sign([Wallet wallet]) {
-    wallet = wallet ?? _msg.wallet;
-
+  Uint8List sign(Wallet wallet) {
     //generate string to sign
     var json_bytes = to_bytes_json();
 
     var signed = wallet.sign_message(json_bytes);
     //return signed;
-    return signed.sublist(64);
+    return signed;
   }
 }
 
 class SignatureMsg extends Msg {
   @override
-  final AMINO_MESSAGE_TYPE = null;
+  final AMINO_MESSAGE_TYPE = '';
   Signature _signature;
 
   SignatureMsg(msg) : super(msg.wallet) {
@@ -169,7 +167,7 @@ class PubKeyMsg extends Msg {
 
     var msg = type_bytes + varint_length + proto;
 
-    return msg;
+    return Uint8List.fromList(msg);
   }
 }
 

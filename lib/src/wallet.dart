@@ -62,9 +62,9 @@ class Wallet {
   }
 
   void initialize_wallet() async {
-    if (_accountNumber != null) {
+    if (_accountNumber == null) {
       var account = await httpClient.getAccount(_address);
-      _accountNumber = account.load.account_number;
+      _accountNumber = account.load.accountNumber;
       _sequence = account.load.sequence;
 
       var nodeInfo = await httpClient.getNodeInfo();

@@ -19,8 +19,8 @@ void main(List<String> args) async {
 
   await t.wallet.initialize_wallet();
 
-  print(t.wallet.accountNumber);
-  //print(t.to_hex_data());
+  //print(SignatureMsg(t).to_protobuf());
+  print(StdTxMsg(t).to_protobuf().signatures);
 
   //print(bech32_decode('bnb1s76hyee7xvxksxlkc4whsmc3gxuqhrqvd3y0zm'));
 }
