@@ -1,3 +1,6 @@
+import 'dart:collection';
+
+import 'package:binance_chain/src/utils/num_utils.dart';
 import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:binance_chain/src/proto/gen/dex.pb.dart';
 import 'package:binance_chain/src/utils/crypto.dart';
@@ -16,7 +19,7 @@ class Msg {
   Wallet _wallet;
   String memo;
 
-  Msg(this._wallet, {this.memo = ''});
+  Msg(this._wallet, [this.memo = '']);
 
   Wallet get wallet => _wallet;
 
@@ -29,12 +32,13 @@ class Msg {
   Uint8List to_amino() {
     var varint_length;
     var proto = to_protobuf();
-    //## if type(proto) != bytes:
-    //##         proto = proto.SerializeToString()
+    if (proto.runtimeType != Uint8List) {
+      proto = proto.writeToBuffer();
+    }
 
     var type_bytes = <int>[];
     if (AMINO_MESSAGE_TYPE.isNotEmpty) {
-      type_bytes = hex.decode('CE6DC043');
+      type_bytes = hex.decode(AMINO_MESSAGE_TYPE);
       varint_length = varint_encode(proto.length + type_bytes.length);
     } else {
       varint_length = varint_encode(proto.length);
@@ -46,6 +50,10 @@ class Msg {
     msg = msg + type_bytes + proto;
 
     return Uint8List.fromList(msg);
+  }
+
+  String to_hex_data() {
+    return hex.encode(StdTxMsg(this).to_amino());
   }
 }
 
@@ -81,11 +89,11 @@ class Signature {
     wallet = wallet ?? _msg.wallet;
 
     //generate string to sign
-    //var json_bytes = to_bytes_json();
+    var json_bytes = to_bytes_json();
 
-    //var signed = wallet.sign_message(json_bytes);
-    var signed = wallet.sign_message(to_json());
-    return signed; //////////////////////////////////////////////////////
+    var signed = wallet.sign_message(json_bytes);
+    //return signed;
+    return signed.sublist(64);
   }
 }
 
@@ -164,4 +172,73 @@ class PubKeyMsg extends Msg {
     return msg;
   }
 }
-//class TransferMsg()
+
+class TransferMsg extends Msg {
+  @override
+  final AMINO_MESSAGE_TYPE = '2A2C87FA';
+
+  String _symbol;
+  double _amount;
+  int _amountAmino;
+  String _from_address;
+  String _to_address;
+
+  TransferMsg(
+    this._symbol,
+    this._amount,
+    this._to_address,
+    memo,
+    wallet,
+  ) : super(wallet, memo) {
+    _from_address = wallet.address;
+    _amountAmino = (_amount * 10.pow(8)).toInt();
+  }
+
+  @override
+  Map to_map() {
+    return LinkedHashMap.from({
+      'inputs': [
+        LinkedHashMap.from({
+          'address': _from_address,
+          'coins': [
+            LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
+          ]
+        })
+      ],
+      'outputs': [
+        LinkedHashMap.from({
+          'address': _to_address,
+          'coins': [
+            LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
+          ]
+        })
+      ]
+    });
+  }
+
+  @override
+  Map to_sign_map() {
+    return {'to_address': _to_address, 'amount': _amount, 'denom': _symbol};
+  }
+
+  @override
+  Send to_protobuf() {
+    var token = Send_Token();
+    token.denom = _symbol;
+    token.amount = fixnum.Int64(_amountAmino);
+
+    var input_addr = Send_Input();
+    input_addr.address = decode_address(_from_address).toList();
+    input_addr.coins.add(token);
+
+    var output_addr = Send_Output();
+    output_addr.address = decode_address(_to_address).toList();
+    output_addr.coins.add(token);
+
+    var msg = Send();
+    msg.inputs.add(input_addr);
+    msg.outputs.add(output_addr);
+
+    return msg;
+  }
+}

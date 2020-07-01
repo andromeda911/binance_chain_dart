@@ -1,15 +1,12 @@
 import 'dart:typed_data';
-
 import 'package:pointycastle/export.dart';
 
 import './utils/crypto.dart';
+import './utils/num_utils.dart';
 import 'package:bitcoin_flutter/bitcoin_flutter.dart' as b_f;
-import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
-//import 'package:bitcoin_flutter/src/utils/magic_hash.dart';
 import './environment.dart';
 import './http_client.dart';
-import "package:pointycastle/ecc/curves/secp256k1.dart";
 
 class Wallet {
   String _privateKey;
@@ -75,8 +72,18 @@ class Wallet {
     }
   }
 
-  Uint8List sign_message(String message) {
-    var s = Signer("ECDSA");
-    //return _bip32hdwallet.sign(message);
+  Uint8List sign_message(Uint8List message) {
+    var dsaSigner = ECDSASigner(SHA256Digest(), HMac(SHA256Digest(), 64))
+      ..init(
+          true,
+          PrivateKeyParameter(ECPrivateKey(BigInt.parse(privateKey, radix: 16),
+              ECDomainParameters('secp256k1'))));
+
+    ECSignature s = dsaSigner.generateSignature(message);
+
+    var buffer = Uint8List(64);
+    buffer.setRange(0, 32, encodeBigInt(s.r));
+    buffer.setRange(32, 64, encodeBigInt(s.s));
+    return buffer;
   }
 }

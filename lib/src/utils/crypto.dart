@@ -1,14 +1,7 @@
 import 'dart:typed_data';
-
-import 'package:bip39/bip39.dart' as bip39;
-import 'package:bitcoin_flutter/bitcoin_flutter.dart' as b_f;
-import 'package:bech32/bech32.dart' as bech32;
-import 'package:bip32/bip32.dart' as bip32;
-import 'dart:convert';
-import 'package:crypto/crypto.dart';
+import './num_utils.dart';
 import 'package:pointycastle/digests/ripemd160.dart';
 import 'package:pointycastle/digests/sha256.dart';
-import 'package:pointycastle/pointycastle.dart';
 import 'package:convert/convert.dart';
 
 String CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
@@ -59,6 +52,12 @@ Uint8List bech32_create_checksum(String hrp, Uint8List data) {
   return Uint8List.fromList(result);
 }
 
+bool bech32_verify_checksum(hrp, data) {
+  //Verify a checksum given HRP and converted data characters.
+
+  return bech32_polymod(bech32_hrp_expand(hrp) + data) == 1;
+}
+
 String bech32_encode(String hrp, Uint8List data) {
   /// Compute a Bech32 string given HRP and data values.
 
@@ -70,33 +69,51 @@ String bech32_encode(String hrp, Uint8List data) {
           .join('');
 }
 
-Uint8List convertbits(Uint8List data, int frombits, int tobits, [pad = true]) {
-  /// General power-of-2 base conversion.
+List bech32_decode(String bech) {
+  /// Validate a Bech32 string, and determine HRP and data.
 
-  var acc = 0;
-  var bits = 0;
-  var result = <int>[];
-  var maxv = (1 << tobits) - 1;
-  var max_acc = (1 << (frombits + tobits - 1)) - 1;
-  for (var value in data) {
-    if (value < 0 || (value >> frombits) >= 1) {
-      return null;
-    }
-    acc = ((acc << frombits) | value) & max_acc;
-    bits += frombits;
-    while (bits >= tobits) {
-      bits -= tobits;
-      result.add((acc >> bits) & maxv);
-    }
+  //validation
+  if ((<bool>[for (var x in bech.codeUnits) (x < 33 && x > 126)].firstWhere(
+            (element) => element,
+            orElse: () => null,
+          ) !=
+          null) ||
+      ((bech.toLowerCase() != bech && bech.toUpperCase() != bech))) {
+    return [null, null];
   }
-  if (pad) {
-    if (bits != 0) {
-      result.add((acc << (tobits - bits)) & maxv);
-    }
-  } else if (bits >= frombits || ((acc << (tobits - bits)) & maxv) >= 1) {
+  bech = bech.toLowerCase();
+  var pos = bech.lastIndexOf('1');
+  if (pos < 1 || pos + 7 > bech.length || bech.length > 90) {
+    return [null, null];
+  }
+  if (<bool>[
+        for (var x in List<int>.generate(
+            bech.substring(pos + 1).length, (index) => index + pos + 1))
+          CHARSET.contains(bech[x])
+      ].firstWhere((element) => element == false, orElse: () => null) !=
+      null) {
+    return [null, null, null];
+  }
+
+  var hrp = bech.substring(0, pos);
+  var data = List<int>.generate(bech.substring(pos + 1).length,
+      (index) => CHARSET.indexOf(bech[index + pos + 1]));
+
+  if (!bech32_verify_checksum(hrp, data)) {
+    return [null, null];
+  }
+
+  return [hrp, data.sublist(0, data.length - 6)];
+}
+
+Uint8List decode_address(String address) {
+  var components = bech32_decode(address);
+  if (components[0] == null) {
     return null;
   }
-  return Uint8List.fromList(result);
+
+  var bits = convertbits(Uint8List.fromList(components[1]), 5, 8, false);
+  return bits;
 }
 
 String encode(String hrp, Uint8List witprog) {
@@ -110,20 +127,4 @@ dynamic getAddressFromPublicKey(String publicKey, [hrp = 'tbnb']) {
   final r = RIPEMD160Digest().process(s);
 
   return encode(hrp, r);
-}
-
-Uint8List varint_encode(int number) {
-  var buf = <int>[];
-  var towrite;
-  while (true) {
-    towrite = number & 0x7f;
-    number >>= 7;
-    if (number != 0) {
-      buf += (towrite | 0x80);
-    } else {
-      buf += towrite;
-      break;
-    }
-  }
-  return buf;
 }
