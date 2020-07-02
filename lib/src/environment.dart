@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 class BinanceEnvironment {
   final String _apiUrl;
   final String _wssUrl;

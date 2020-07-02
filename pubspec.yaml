@@ -1,5 +1,5 @@
 name: binance_chain
-description: A starting point for Dart libraries or applications.
+description: Binance Chain Api Wrapper
 # version: 1.0.0
 # homepage: https://www.example.com
 
@@ -10,13 +10,9 @@ dependencies:
   http: ^0.12.1
   protoc_plugin: ^19.0.1
   protobuf: ^1.0.1
-  bitcoin_flutter: ^2.0.1
   bip39: ^1.0.3
-  #bip_bech32: ^0.1.3
   bip32: ^1.0.5
-  crypto: any
   pointycastle: ^1.0.2
-  dartsv: ^0.3.2
   
 dev_dependencies:
   pedantic: ^1.9.0

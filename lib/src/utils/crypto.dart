@@ -1,10 +1,11 @@
 import 'dart:typed_data';
-import './num_utils.dart';
 import 'package:pointycastle/digests/ripemd160.dart';
 import 'package:pointycastle/digests/sha256.dart';
 import 'package:convert/convert.dart';
 
-String CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
+import './num_utils.dart';
+
+String CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 
 int bech32_polymod(List values) {
   ///Internal function that computes the Bech32 checksum.

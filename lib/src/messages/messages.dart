@@ -1,14 +1,14 @@
 import 'dart:collection';
+import 'dart:convert';
+import 'dart:typed_data';
 
-import 'package:binance_chain/src/utils/num_utils.dart';
 import 'package:fixnum/fixnum.dart' as fixnum;
-import 'package:binance_chain/src/proto/gen/dex.pb.dart';
-import 'package:binance_chain/src/utils/crypto.dart';
+import 'package:convert/convert.dart';
 
+import '../utils/num_utils.dart';
 import '../utils/crypto.dart';
 import '../wallet.dart';
-import 'dart:typed_data';
-import 'package:convert/convert.dart';
+import './proto/gen/dex.pb.dart';
 
 // An identifier for tools triggering broadcast transactions, set to zero if unwilling to disclose.
 var BROADCAST_SOURCE = 0;
@@ -70,15 +70,15 @@ class Signature {
   }
 
   String to_json() {
-    return {
+    return json.encode(LinkedHashMap.from({
       'account_number': _msg.wallet.accountNumber.toString(),
       'chain_id': _chain_id,
       'data': _data,
       'memo': _msg.memo,
       'msgs': [_msg.to_map()],
       'sequence': _msg.wallet.sequence.toString(),
-      'source': _source
-    }.toString();
+      'source': _source.toString()
+    }));
   }
 
   Uint8List to_bytes_json() {
@@ -88,6 +88,7 @@ class Signature {
   Uint8List sign(Wallet wallet) {
     //generate string to sign
     var json_bytes = to_bytes_json();
+    //var json_bytes = to_bytes_json();
 
     var signed = wallet.sign_message(json_bytes);
     //return signed;
@@ -154,7 +155,7 @@ class PubKeyMsg extends Msg {
 
   @override
   Uint8List to_protobuf() {
-    return Uint8List.fromList(wallet.publicKey.codeUnits);
+    return Uint8List.fromList(hex.decode(wallet.publicKey));
   }
 
   @override

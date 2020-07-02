@@ -10,17 +10,15 @@ import 'package:convert/convert.dart';
 import 'package:binance_chain/src/wallet.dart';
 
 void main(List<String> args) async {
+  //var env = BinanceEnvironment.getTestnetEnv();
+  var env = BinanceEnvironment.getProductionEnv();
+  var client = HttpApiClient(env: env);
   var w = Wallet.fromMnemonicPhrase(
       'leisure thumb smoke skull deputy axis ozone odor group remain roof pole citizen alcohol carbon include annual grain motion gravity baby nation silent wealth',
-      BinanceEnvironment.getProductionEnv());
+      env);
 
   var t = TransferMsg(
-      'BNB', 2, 'bnb1s76hyee7xvxksxlkc4whsmc3gxuqhrqvd3y0zm', 'thanks', w);
+      'BNB', 0.01, 'bnb1s76hyee7xvxksxlkc4whsmc3gxuqhrqvd3y0zm', 'thanks', w);
 
-  await t.wallet.initialize_wallet();
-
-  //print(SignatureMsg(t).to_protobuf());
-  print(StdTxMsg(t).to_protobuf().signatures);
-
-  //print(bech32_decode('bnb1s76hyee7xvxksxlkc4whsmc3gxuqhrqvd3y0zm'));
+  print(w.address);
 }

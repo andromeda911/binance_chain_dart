@@ -1,10 +1,12 @@
 import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
+import 'package:convert/convert.dart';
+import 'package:bip32/bip32.dart' as bip32;
+import 'package:bip39/bip39.dart' as bip39;
 
 import './utils/crypto.dart';
+import './utils/network.dart';
 import './utils/num_utils.dart';
-import 'package:bitcoin_flutter/bitcoin_flutter.dart' as b_f;
-import 'package:bip39/bip39.dart' as bip39;
 import './environment.dart';
 import './http_client.dart';
 
@@ -12,7 +14,7 @@ class Wallet {
   String _privateKey;
   String _publicKey;
   String _address;
-  b_f.HDWallet _bip32hdwallet;
+  bip32.BIP32 _bip32;
   int _accountNumber;
   String _chain_id;
   int _sequence;
@@ -50,12 +52,21 @@ class Wallet {
 
   Wallet.fromMnemonicPhrase(String mnemonicPhrase, BinanceEnvironment env) {
     if (bip39.validateMnemonic(mnemonicPhrase)) {
-      var w = b_f.HDWallet.fromSeed(bip39.mnemonicToSeed(mnemonicPhrase))
+      var network = bitcoin;
+      _bip32 = bip32.BIP32
+          .fromSeed(
+              bip39.mnemonicToSeed(mnemonicPhrase),
+              bip32.NetworkType(
+                  bip32: bip32.Bip32Type(
+                      public: network.bip32.public,
+                      private: network.bip32.private),
+                  wif: network.wif))
           .derivePath("44'/714'/0'/0/0");
-      _bip32hdwallet = w;
-      _privateKey = w.privKey;
-      _publicKey = w.pubKey;
-      _address = getAddressFromPublicKey(w.pubKey, env.hrp);
+
+      _privateKey = hex.encode(_bip32.privateKey);
+      _publicKey = hex.encode(_bip32.publicKey);
+      _env = env;
+      _address = getAddressFromPublicKey(_publicKey, env.hrp);
     } else {
       throw ArgumentError('Mnemonic Phrase is invalid');
     }
@@ -85,5 +96,11 @@ class Wallet {
     buffer.setRange(0, 32, encodeBigInt(s.r));
     buffer.setRange(32, 64, encodeBigInt(s.s));
     return buffer;
+  }
+
+  void increment_account_sequence() {
+    if (_sequence != null) {
+      _sequence += 1;
+    }
   }
 }

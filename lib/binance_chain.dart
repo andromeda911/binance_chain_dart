@@ -1,7 +1,9 @@
-/// Support for doing something awesome.
+/// Binance Chain Api wrapper.
 ///
-/// More dartdocs go here.
+
 library binance_chain;
 
-export 'src/binance_chain_base.dart';
-// TODO: Export any libraries intended for clients of this package.
+export 'src/messages/messages.dart';
+export 'src/wallet.dart';
+export 'src/environment.dart';
+export 'src/http_client.dart';
