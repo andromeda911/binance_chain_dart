@@ -5,19 +5,19 @@ class Error {
   Error({this.code, this.message});
 }
 
-class Times{
-  String ap_time; 
+class Times {
+  String ap_time;
   String block_time;
-  
+
   Times({this.ap_time, this.block_time});
 
-  Times.fromJson(var json){
+  Times.fromJson(var json) {
     ap_time = json['ap_time'];
     block_time = json['block_time'];
   }
 }
 
-class Validator{
+class Validator {
   String address;
   List<int> pub_key;
   int voting_power;
@@ -25,7 +25,7 @@ class Validator{
 
   Validator({this.address, this.pub_key, this.voting_power, this.accum});
 
-  Validator.fromJson(var json){
+  Validator.fromJson(var json) {
     address = json['address'];
     pub_key = json['pub_key'].cast<int>();
     voting_power = json['voting_power'];
@@ -33,17 +33,18 @@ class Validator{
   }
 }
 
-class Validators{
+class Validators {
   int blockHeight;
   List<Validator> validators;
 
   Validators({this.blockHeight, this.validators});
 
-  Validators.fromJson(var json){
+  Validators.fromJson(var json) {
     blockHeight = json['block_height'];
-    if(json['validators' != null]){
+    if (json['validators' != null]) {
       validators = [
-        for (var validatorInfo in json['validators']) Validator.fromJson(validatorInfo)
+        for (var validatorInfo in json['validators'])
+          Validator.fromJson(validatorInfo)
       ];
     }
   }
@@ -85,12 +86,7 @@ class Peer {
     streamAddr = json['stream_addr'];
     version = json['version'];
   }
-
 }
-
-
-
-
 
 class NodeInfo {
   ProtocolVersion protocolVersion;
@@ -113,6 +109,7 @@ class NodeInfo {
       this.other});
 
   NodeInfo.fromJson(Map<String, dynamic> json) {
+    json = json['node_info'];
     protocolVersion = json['protocol_version'] != null
         ? ProtocolVersion.fromJson(json['protocol_version'])
         : null;
@@ -124,7 +121,6 @@ class NodeInfo {
     moniker = json['moniker'];
     other = json['other'] != null ? Other.fromJson(json['other']) : null;
   }
-
 }
 
 class ProtocolVersion {
@@ -139,8 +135,6 @@ class ProtocolVersion {
     block = json['block'];
     app = json['app'];
   }
-
-
 }
 
 class Other {
@@ -154,7 +148,6 @@ class Other {
     rpcAddress = json['rpc_address'];
   }
 }
-
 
 class SyncInfo {
   String latestBlockHash;
@@ -179,7 +172,6 @@ class SyncInfo {
   }
 }
 
-
 class ValidatorInfo {
   String address;
   List<int> pubKey;
@@ -192,8 +184,8 @@ class ValidatorInfo {
     pubKey = json['pub_key'].cast<int>();
     votingPower = json['voting_power'];
   }
-
 }
+
 class ResultStatus {
   NodeInfo nodeInfo;
   SyncInfo syncInfo;
@@ -202,18 +194,15 @@ class ResultStatus {
   ResultStatus({this.nodeInfo, this.syncInfo, this.validatorInfo});
 
   ResultStatus.fromJson(Map<String, dynamic> json) {
-    nodeInfo = json['node_info'] != null
-        ? NodeInfo.fromJson(json['node_info'])
-        : null;
-    syncInfo = json['sync_info'] != null
-        ? SyncInfo.fromJson(json['sync_info'])
-        : null;
+    nodeInfo =
+        json['node_info'] != null ? NodeInfo.fromJson(json['node_info']) : null;
+    syncInfo =
+        json['sync_info'] != null ? SyncInfo.fromJson(json['sync_info']) : null;
     validatorInfo = json['validator_info'] != null
         ? ValidatorInfo.fromJson(json['validator_info'])
         : null;
   }
 }
-
 
 class Account {
   int accountNumber;
@@ -244,7 +233,6 @@ class Account {
     publicKey = json['public_key'].cast<int>();
     sequence = json['sequence'];
   }
-
 }
 
 class Balance {
@@ -273,3 +261,34 @@ class AccountSequence {
   }
 }
 
+class Transaction {
+  String hash;
+  String log;
+  String data;
+  String height;
+  int code;
+  bool ok;
+
+  Transaction(
+      {this.hash, this.log, this.data, this.height, this.code, this.ok});
+
+  Transaction.fromJson(Map<String, dynamic> json) {
+    hash = json['hash'];
+    log = json['log'];
+    data = json['data'];
+    height = json['height'];
+    code = json['code'];
+    ok = json['ok'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['hash'] = this.hash;
+    data['log'] = this.log;
+    data['data'] = this.data;
+    data['height'] = this.height;
+    data['code'] = this.code;
+    data['ok'] = this.ok;
+    return data;
+  }
+}

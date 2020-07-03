@@ -8,7 +8,7 @@ import './utils/crypto.dart';
 import './utils/network.dart';
 import './utils/num_utils.dart';
 import './environment.dart';
-import './http_client.dart';
+import './http_client/http_client.dart';
 
 class Wallet {
   String _privateKey;
