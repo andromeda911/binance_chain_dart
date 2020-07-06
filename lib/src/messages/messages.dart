@@ -181,14 +181,20 @@ class TransferMsg extends Msg {
   int _amountAmino;
   String _from_address;
   String _to_address;
+  String _memo;
 
-  TransferMsg(
-    this._symbol,
-    this._amount,
-    this._to_address,
-    memo,
-    wallet,
-  ) : super(wallet, memo) {
+  TransferMsg({
+    String symbol,
+    double amount,
+    String to_address,
+    String memo,
+    Wallet wallet,
+  }) : super(wallet, memo) {
+    _symbol = symbol;
+    _amount = amount;
+    _to_address = to_address;
+    _wallet = wallet;
+    _memo = memo;
     _from_address = wallet.address;
     _amountAmino = (_amount * 10.pow(8)).toInt();
   }
