@@ -101,12 +101,12 @@ class HttpApiClient {
 }
 
 class APIResponse<DataModel> {
-  int status;
+  int statusCode;
   DataModel load;
-  APIResponse(this.status, this.load);
+  APIResponse(this.statusCode, this.load);
 
   APIResponse.fromOther(APIResponse other) {
-    status = other.status;
+    statusCode = other.statusCode;
     load = load;
   }
 }
