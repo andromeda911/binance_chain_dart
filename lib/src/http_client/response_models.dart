@@ -42,10 +42,7 @@ class Validators {
   Validators.fromJson(var json) {
     blockHeight = json['block_height'];
     if (json['validators' != null]) {
-      validators = [
-        for (var validatorInfo in json['validators'])
-          Validator.fromJson(validatorInfo)
-      ];
+      validators = [for (var validatorInfo in json['validators']) Validator.fromJson(validatorInfo)];
     }
   }
 }
@@ -62,17 +59,7 @@ class Peer {
   String streamAddr;
   String version;
 
-  Peer(
-      {this.accelerated,
-      this.accessAddr,
-      this.capabilities,
-      this.id,
-      this.listenAddr,
-      this.moniker,
-      this.network,
-      this.originalListenAddr,
-      this.streamAddr,
-      this.version});
+  Peer({this.accelerated, this.accessAddr, this.capabilities, this.id, this.listenAddr, this.moniker, this.network, this.originalListenAddr, this.streamAddr, this.version});
 
   Peer.fromJson(Map<String, dynamic> json) {
     accelerated = json['accelerated'];
@@ -98,21 +85,11 @@ class NodeInfo {
   String moniker;
   Other other;
 
-  NodeInfo(
-      {this.protocolVersion,
-      this.id,
-      this.listenAddr,
-      this.network,
-      this.version,
-      this.channels,
-      this.moniker,
-      this.other});
+  NodeInfo({this.protocolVersion, this.id, this.listenAddr, this.network, this.version, this.channels, this.moniker, this.other});
 
   NodeInfo.fromJson(Map<String, dynamic> json) {
     json = json['node_info'];
-    protocolVersion = json['protocol_version'] != null
-        ? ProtocolVersion.fromJson(json['protocol_version'])
-        : null;
+    protocolVersion = json['protocol_version'] != null ? ProtocolVersion.fromJson(json['protocol_version']) : null;
     id = json['id'];
     listenAddr = json['listen_addr'];
     network = json['network'];
@@ -156,12 +133,7 @@ class SyncInfo {
   String latestBlockTime;
   bool catchingUp;
 
-  SyncInfo(
-      {this.latestBlockHash,
-      this.latestAppHash,
-      this.latestBlockHeight,
-      this.latestBlockTime,
-      this.catchingUp});
+  SyncInfo({this.latestBlockHash, this.latestAppHash, this.latestBlockHeight, this.latestBlockTime, this.catchingUp});
 
   SyncInfo.fromJson(Map<String, dynamic> json) {
     latestBlockHash = json['latest_block_hash'];
@@ -194,13 +166,9 @@ class ResultStatus {
   ResultStatus({this.nodeInfo, this.syncInfo, this.validatorInfo});
 
   ResultStatus.fromJson(Map<String, dynamic> json) {
-    nodeInfo =
-        json['node_info'] != null ? NodeInfo.fromJson(json['node_info']) : null;
-    syncInfo =
-        json['sync_info'] != null ? SyncInfo.fromJson(json['sync_info']) : null;
-    validatorInfo = json['validator_info'] != null
-        ? ValidatorInfo.fromJson(json['validator_info'])
-        : null;
+    nodeInfo = json['node_info'] != null ? NodeInfo.fromJson(json['node_info']) : null;
+    syncInfo = json['sync_info'] != null ? SyncInfo.fromJson(json['sync_info']) : null;
+    validatorInfo = json['validator_info'] != null ? ValidatorInfo.fromJson(json['validator_info']) : null;
   }
 }
 
@@ -212,13 +180,7 @@ class Account {
   List<int> publicKey;
   int sequence;
 
-  Account(
-      {this.accountNumber,
-      this.address,
-      this.balances,
-      this.flags,
-      this.publicKey,
-      this.sequence});
+  Account({this.accountNumber, this.address, this.balances, this.flags, this.publicKey, this.sequence});
 
   Account.fromJson(Map<String, dynamic> json) {
     accountNumber = json['account_number'];
@@ -269,8 +231,7 @@ class Transaction {
   int code;
   bool ok;
 
-  Transaction(
-      {this.hash, this.log, this.data, this.height, this.code, this.ok});
+  Transaction({this.hash, this.log, this.data, this.height, this.code, this.ok});
 
   Transaction.fromJson(Map<String, dynamic> json) {
     hash = json['hash'];
@@ -290,5 +251,143 @@ class Transaction {
     data['code'] = this.code;
     data['ok'] = this.ok;
     return data;
+  }
+}
+
+class TxPage {
+  List<Tx> tx;
+  int total;
+
+  TxPage({this.tx, this.total});
+
+  TxPage.fromJson(Map<String, dynamic> json) {
+    if (json['tx'] != null) {
+      tx = new List<Tx>();
+      json['tx'].forEach((v) {
+        tx.add(new Tx.fromJson(v));
+      });
+    }
+    total = json['total'];
+  }
+}
+
+class Tx {
+  String txHash;
+  int blockHeight;
+  String txType;
+  String timeStamp;
+  String fromAddr;
+  String toAddr;
+  String value;
+  String txAsset;
+  String txFee;
+  String proposalId;
+  int txAge;
+  String orderId;
+  int code;
+  String data;
+  int confirmBlocks;
+  String memo;
+  int source;
+  int sequence;
+
+  Tx({this.txHash, this.blockHeight, this.txType, this.timeStamp, this.fromAddr, this.toAddr, this.value, this.txAsset, this.txFee, this.proposalId, this.txAge, this.orderId, this.code, this.data, this.confirmBlocks, this.memo, this.source, this.sequence});
+
+  Tx.fromJson(Map<String, dynamic> json) {
+    txHash = json['txHash'];
+    blockHeight = json['blockHeight'];
+    txType = json['txType'];
+    timeStamp = json['timeStamp'];
+    fromAddr = json['fromAddr'];
+    toAddr = json['toAddr'];
+    value = json['value'];
+    txAsset = json['txAsset'];
+    txFee = json['txFee'];
+    proposalId = json['proposalId'];
+    txAge = json['txAge'];
+    orderId = json['orderId'];
+    code = json['code'];
+    data = json['data'];
+    confirmBlocks = json['confirmBlocks'];
+    memo = json['memo'];
+    source = json['source'];
+    sequence = json['sequence'];
+  }
+}
+
+class TickerStats {
+  String symbol;
+  String baseAssetName;
+  String quoteAssetName;
+  String priceChange;
+  String priceChangePercent;
+  String prevClosePrice;
+  String lastPrice;
+  String lastQuantity;
+  String openPrice;
+  String highPrice;
+  String lowPrice;
+  int openTime;
+  int closeTime;
+  String firstId;
+  String lastId;
+  String bidPrice;
+  String bidQuantity;
+  String askPrice;
+  String askQuantity;
+  String weightedAvgPrice;
+  String volume;
+  String quoteVolume;
+  int count;
+
+  TickerStats(
+      {this.symbol,
+      this.baseAssetName,
+      this.quoteAssetName,
+      this.priceChange,
+      this.priceChangePercent,
+      this.prevClosePrice,
+      this.lastPrice,
+      this.lastQuantity,
+      this.openPrice,
+      this.highPrice,
+      this.lowPrice,
+      this.openTime,
+      this.closeTime,
+      this.firstId,
+      this.lastId,
+      this.bidPrice,
+      this.bidQuantity,
+      this.askPrice,
+      this.askQuantity,
+      this.weightedAvgPrice,
+      this.volume,
+      this.quoteVolume,
+      this.count});
+
+  TickerStats.fromJson(Map<String, dynamic> json) {
+    symbol = json['symbol'] ?? '0.0';
+    baseAssetName = json['baseAssetName'] ?? '0.0';
+    quoteAssetName = json['quoteAssetName'] ?? '0.0';
+    priceChange = json['priceChange'] ?? '0.0';
+    priceChangePercent = json['priceChangePercent'] ?? '0.0';
+    prevClosePrice = json['prevClosePrice'] ?? '0.0';
+    lastPrice = json['lastPrice'] ?? '0.0';
+    lastQuantity = json['lastQuantity'] ?? '0.0';
+    openPrice = json['openPrice'] ?? '0.0';
+    highPrice = json['highPrice'] ?? '0.0';
+    lowPrice = json['lowPrice'] ?? '0.0';
+    openTime = json['openTime'] ?? 0;
+    closeTime = json['closeTime'] ?? 0;
+    firstId = json['firstId'] ?? '0.0';
+    lastId = json['lastId'] ?? '0.0';
+    bidPrice = json['bidPrice'] ?? '0.0';
+    bidQuantity = json['bidQuantity'] ?? '0.0';
+    askPrice = json['askPrice'] ?? '0.0';
+    askQuantity = json['askQuantity'] ?? '0.0';
+    weightedAvgPrice = json['weightedAvgPrice'] ?? '0.0';
+    volume = json['volume'] ?? '0.0';
+    quoteVolume = json['quoteVolume'] ?? '0.0';
+    count = json['count'] ?? 0;
   }
 }

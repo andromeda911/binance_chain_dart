@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart';
-
+import 'package:meta/meta.dart';
 import '../environment.dart';
 import '../messages/messages.dart';
 import 'response_models.dart';
@@ -20,8 +20,7 @@ class HttpApiClient {
     return '${_env.apiUrl}/v1/$path';
   }
 
-  Future<APIResponse> _request(String method, String path,
-      {Map<String, String> headers, dynamic body}) async {
+  Future<APIResponse> _request(String method, String path, {Map<String, String> headers, dynamic body}) async {
     var url = _createFullPath(path);
     var resp;
     switch (method) {
@@ -46,8 +45,7 @@ class HttpApiClient {
         if (res.containsKey('success') && !res['success']) {
           throw BinanceChainAPIException();
         }
-        return APIResponse(
-            response.statusCode, res.containsKey('data') ? res['data'] : res);
+        return APIResponse(response.statusCode, res.containsKey('data') ? res['data'] : res);
       } catch (e) {
         throw BinanceChainRequestException('InvalidResponse ${response.body}');
       }
@@ -56,13 +54,11 @@ class HttpApiClient {
     }
   }
 
-  Future<APIResponse<dynamic>> _post(String path,
-      {Map<String, String> headers = const {}, dynamic body = ''}) async {
+  Future<APIResponse<dynamic>> _post(String path, {Map<String, String> headers = const {}, dynamic body = ''}) async {
     return _request('post', path, headers: headers, body: body);
   }
 
-  Future<APIResponse<dynamic>> _get(String path,
-      {Map<String, String> headers}) async {
+  Future<APIResponse<dynamic>> _get(String path, {Map<String, String> headers}) async {
     return _request('get', path, headers: headers);
   }
 
@@ -80,10 +76,25 @@ class HttpApiClient {
 
   Future<APIResponse<Transaction>> broadcastMsg(Msg msg) async {
     await msg.wallet.initialize_wallet();
-    var res = await _post('broadcast',
-        headers: <String, String>{'content-type': 'text/plain'},
-        body: msg.to_hex_data());
+    var res = await _post('broadcast', headers: <String, String>{'content-type': 'text/plain'}, body: msg.to_hex_data());
     msg.wallet.increment_account_sequence();
+    res.load = Transaction.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
+
+  Future<APIResponse<TxPage>> getTransactions({@required String address, int blockHeight, int endTime, int limit, int offset, TxSide side, int startTime, String txAsset, TxType txType}) async {
+    var path = "transactions?address=$address"
+        "${blockHeight != null ? '&blockHeight=$blockHeight' : ''}"
+        "${endTime != null ? '&endTime=$endTime' : ''}"
+        "${limit != null ? '&limit=$limit' : ''}"
+        "${offset != null ? '&offset=$offset' : ''}"
+        "${side != null ? '&side=' + side.toString().substring(side.toString().indexOf('.') + 1) : ''}"
+        "${startTime != null ? '&startTime=$startTime' : ''}"
+        "${txAsset != null ? '&txAsset=$txAsset' : ''}"
+        "${txType != null ? '&txType=' + txType.toString().substring(txType.toString().indexOf('.') + 1) : ''}";
+
+    var res = await _get('transactions');
+
     res.load = Transaction.fromJson(res.load);
     return APIResponse.fromOther(res);
   }
@@ -103,9 +114,23 @@ class APIResponse<DataModel> {
 class BinanceChainAPIException implements Exception {
   String message;
   BinanceChainAPIException([this.message]);
+
+  @override
+  String toString() {
+    if (message == null) return 'Exception';
+    return 'Exception: $message';
+  }
 }
 
 class BinanceChainRequestException implements Exception {
   String message;
   BinanceChainRequestException([this.message]);
+  @override
+  String toString() {
+    if (message == null) return 'Exception';
+    return 'Exception: $message';
+  }
 }
+
+enum TxType { NEW_ORDER, ISSUE_TOKEN, BURN_TOKEN, LIST_TOKEN, CANCEL_ORDER, FREEZE_TOKEN, UN_FREEZE_TOKEN, TRANSFER, PROPOSAL, VOTE, MINT, DEPOSIT, CREATE_VALIDATOR, REMOVE_VALIDATOR, TIME_LOCK, TIME_UNLOCK, TIME_RELOCK, SET_ACCOUNT_FLAG, HTL_TRANSFER, CLAIM_HTL, DEPOSIT_HTL, REFUND_HTL }
+enum TxSide { RECEIVE, SEND }
