@@ -102,7 +102,7 @@ class HttpApiClient {
   Future<APIResponse<TickerStatistics>> getTickerStats24hr({String symbol}) async {
     final path = "ticker/24hr${symbol != null ? '&symbol=$symbol' : ''}";
     var res = await _get(path);
-    res.load = TickerStatistics.fromJson(res.load);
+    res.load = TickerStatistics.fromJson(res.load[0]);
     return APIResponse.fromOther(res);
   }
 }
