@@ -194,7 +194,7 @@ class TransferMsg extends Msg {
     _amount = amount;
     _to_address = to_address;
     _wallet = wallet;
-    _memo = memo;
+    _memo = memo ?? '';
     _from_address = wallet.address;
     _amountAmino = (_amount * 10.pow(8)).toInt();
   }
