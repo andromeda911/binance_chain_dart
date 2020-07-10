@@ -99,10 +99,14 @@ class HttpApiClient {
     return APIResponse.fromOther(res);
   }
 
-  Future<APIResponse<TickerStatistics>> getTickerStats24hr({String symbol}) async {
+  Future<APIResponse<List<TickerStatistics>>> getTickerStats24hr({String symbol}) async {
     final path = "ticker/24hr${symbol != null ? '&symbol=$symbol' : ''}";
     var res = await _get(path);
-    res.load = TickerStatistics.fromJson(res.load[0]);
+    if (res.load != null) {
+      res.load = List<TickerStatistics>.generate(res.load.length, (index) => TickerStatistics.fromJson(res.load[index]));
+    } else {
+      res.load = [];
+    }
     return APIResponse.fromOther(res);
   }
 }
