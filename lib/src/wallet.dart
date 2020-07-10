@@ -43,7 +43,10 @@ class Wallet {
   Wallet(String privateKey, BinanceEnvironment env) {
     if (privateKey.isNotEmpty) {
       _privateKey = privateKey;
-      env = env;
+      _env = env;
+      _bip32 = bip32.BIP32.fromPrivateKey(hex.decode(_privateKey), null);
+      _publicKey = hex.encode(_bip32.publicKey);
+      _address = getAddressFromPublicKey(_publicKey, env.hrp);
     } else {
       throw ArgumentError('Private key can`t be empty');
     }
