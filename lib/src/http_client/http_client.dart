@@ -83,7 +83,7 @@ class HttpApiClient {
   }
 
   Future<APIResponse<TxPage>> getTransactions({@required String address, int blockHeight, int endTime, int limit, int offset, TxSide side, int startTime, String txAsset, TxType txType}) async {
-    var path = "transactions?address=$address"
+    final path = "transactions?address=$address"
         "${blockHeight != null ? '&blockHeight=$blockHeight' : ''}"
         "${endTime != null ? '&endTime=$endTime' : ''}"
         "${limit != null ? '&limit=$limit' : ''}"
@@ -93,9 +93,16 @@ class HttpApiClient {
         "${txAsset != null ? '&txAsset=$txAsset' : ''}"
         "${txType != null ? '&txType=' + txType.toString().substring(txType.toString().indexOf('.') + 1) : ''}";
 
-    var res = await _get('transactions');
+    var res = await _get(path);
 
     res.load = Transaction.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
+
+  Future<APIResponse<TickerStatistics>> getTickerStats24hr({String symbol}) async {
+    final path = "ticker/24hr${symbol != null ? '&symbol=$symbol' : ''}";
+    var res = await _get(path);
+    res.load = TickerStatistics.fromJson(res.load);
     return APIResponse.fromOther(res);
   }
 }

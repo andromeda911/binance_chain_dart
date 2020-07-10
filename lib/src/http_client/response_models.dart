@@ -315,7 +315,7 @@ class Tx {
   }
 }
 
-class TickerStats {
+class TickerStatistics {
   String symbol;
   String baseAssetName;
   String quoteAssetName;
@@ -340,7 +340,7 @@ class TickerStats {
   String quoteVolume;
   int count;
 
-  TickerStats(
+  TickerStatistics(
       {this.symbol,
       this.baseAssetName,
       this.quoteAssetName,
@@ -365,7 +365,7 @@ class TickerStats {
       this.quoteVolume,
       this.count});
 
-  TickerStats.fromJson(Map<String, dynamic> json) {
+  TickerStatistics.fromJson(Map<String, dynamic> json) {
     symbol = json['symbol'] ?? '0.0';
     baseAssetName = json['baseAssetName'] ?? '0.0';
     quoteAssetName = json['quoteAssetName'] ?? '0.0';
