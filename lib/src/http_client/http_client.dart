@@ -100,7 +100,7 @@ class HttpApiClient {
 
     var res = await _get(path);
 
-    res.load = Transaction.fromJson(res.load);
+    res.load = TxPage.fromJson(res.load);
     return APIResponse.fromOther(res);
   }
 
