@@ -64,7 +64,9 @@ class HttpApiClient {
 
   Future<APIResponse<Account>> getAccount(String address) async {
     var res = await _get('account/$address');
+    print(res.load);
     res.load = Account.fromJson(res.load);
+    print(res.load);
     return APIResponse.fromOther(res);
   }
 
@@ -118,7 +120,7 @@ class APIResponse<DataModel_T> {
 
   APIResponse.fromOther(APIResponse other) {
     statusCode = other.statusCode;
-    load = load;
+    load = other.load;
   }
 }
 
