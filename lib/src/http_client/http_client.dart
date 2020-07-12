@@ -36,21 +36,11 @@ class HttpApiClient {
   }
 
   APIResponse _handle_response(Response response) {
-    try {
-      var res = json.decode(response.body);
-      if (res is Map) {
-        if (res.containsKey('code') && ![0, '200000'].contains(res['code'])) {
-          throw BinanceChainAPIException();
-        }
-        if (res.containsKey('success') && !res['success']) {
-          throw BinanceChainAPIException();
-        }
-        APIResponse(response.statusCode, res.containsKey('data') ? res['data'] : res);
-      }
-      return APIResponse(response.statusCode, res);
-    } catch (e) {
-      throw BinanceChainRequestException('InvalidResponse ${response.body}');
+    var res = json.decode(response.body);
+    if (res is Map) {
+      APIResponse(response.statusCode, res.containsKey('data') ? res['data'] : res);
     }
+    return APIResponse(response.statusCode, res);
   }
 
   Future<APIResponse<dynamic>> _post(String path, {Map<String, String> headers = const {}, dynamic body = ''}) async {
