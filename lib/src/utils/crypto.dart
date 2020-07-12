@@ -10,13 +10,7 @@ String CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 int bech32_polymod(List values) {
   ///Internal function that computes the Bech32 checksum.
 
-  final generator = [
-    0x3b6a57b2,
-    0x26508e6d,
-    0x1ea119fa,
-    0x3d4233dd,
-    0x2a1462b3
-  ];
+  final generator = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
 
   var chk = 1;
   int top;
@@ -64,10 +58,7 @@ String bech32_encode(String hrp, Uint8List data) {
 
   var combined = data + bech32_create_checksum(hrp, data);
 
-  return hrp +
-      '1' +
-      List<String>.generate(combined.length, (i) => CHARSET[combined[i]])
-          .join('');
+  return hrp + '1' + List<String>.generate(combined.length, (i) => CHARSET[combined[i]]).join('');
 }
 
 List bech32_decode(String bech) {
@@ -87,18 +78,12 @@ List bech32_decode(String bech) {
   if (pos < 1 || pos + 7 > bech.length || bech.length > 90) {
     return [null, null];
   }
-  if (<bool>[
-        for (var x in List<int>.generate(
-            bech.substring(pos + 1).length, (index) => index + pos + 1))
-          CHARSET.contains(bech[x])
-      ].firstWhere((element) => element == false, orElse: () => null) !=
-      null) {
-    return [null, null, null];
+  if (<bool>[for (var x in List<int>.generate(bech.substring(pos + 1).length, (index) => index + pos + 1)) CHARSET.contains(bech[x])].firstWhere((element) => element == false, orElse: () => null) != null) {
+    return [null, null];
   }
 
   var hrp = bech.substring(0, pos);
-  var data = List<int>.generate(bech.substring(pos + 1).length,
-      (index) => CHARSET.indexOf(bech[index + pos + 1]));
+  var data = List<int>.generate(bech.substring(pos + 1).length, (index) => CHARSET.indexOf(bech[index + pos + 1]));
 
   if (!bech32_verify_checksum(hrp, data)) {
     return [null, null];
