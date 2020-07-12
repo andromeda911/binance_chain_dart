@@ -36,24 +36,20 @@ class HttpApiClient {
   }
 
   APIResponse _handle_response(Response response) {
-    if (response.statusCode.toString().startsWith('2')) {
-      try {
-        var res = json.decode(response.body);
-        if (res is Map) {
-          if (res.containsKey('code') && ![0, '200000'].contains(res['code'])) {
-            throw BinanceChainAPIException();
-          }
-          if (res.containsKey('success') && !res['success']) {
-            throw BinanceChainAPIException();
-          }
-          APIResponse(response.statusCode, res.containsKey('data') ? res['data'] : res);
+    try {
+      var res = json.decode(response.body);
+      if (res is Map) {
+        if (res.containsKey('code') && ![0, '200000'].contains(res['code'])) {
+          throw BinanceChainAPIException();
         }
-        return APIResponse(response.statusCode, res);
-      } catch (e) {
-        throw BinanceChainRequestException('InvalidResponse ${response.body}');
+        if (res.containsKey('success') && !res['success']) {
+          throw BinanceChainAPIException();
+        }
+        APIResponse(response.statusCode, res.containsKey('data') ? res['data'] : res);
       }
-    } else {
-      throw BinanceChainAPIException(response.body);
+      return APIResponse(response.statusCode, res);
+    } catch (e) {
+      throw BinanceChainRequestException('InvalidResponse ${response.body}');
     }
   }
 
