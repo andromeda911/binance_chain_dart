@@ -94,3 +94,8 @@ class Wallet {
     }
   }
 }
+
+bool validateAddress(String address) {
+  var bechDecoded = bech32_decode(address);
+  return bechDecoded[0] == null;
+}
