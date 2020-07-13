@@ -65,11 +65,12 @@ class HttpApiClient {
     return APIResponse.fromOther(res);
   }
 
-  Future<APIResponse<Transaction>> broadcastMsg(Msg msg) async {
+  Future<APIResponse<List<Transaction>>> broadcastMsg(Msg msg) async {
     await msg.wallet.initialize_wallet();
     var res = await _post('broadcast', headers: <String, String>{'content-type': 'text/plain'}, body: msg.to_hex_data());
     msg.wallet.increment_account_sequence();
-    res.load = Transaction.fromJson(res.load);
+
+    res.load = List<Transaction>.generate(res.load.length, (index) => Transaction.fromJson(res.load[index]));
     return APIResponse.fromOther(res);
   }
 
