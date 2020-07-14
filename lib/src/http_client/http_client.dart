@@ -53,9 +53,7 @@ class HttpApiClient {
 
   Future<APIResponse<Account>> getAccount(String address) async {
     var res = await _get('account/$address');
-    print(res.load);
     res.load = Account.fromJson(res.load);
-    print(res.load);
     return APIResponse.fromOther(res);
   }
 
@@ -67,9 +65,12 @@ class HttpApiClient {
 
   Future<APIResponse<List<Transaction>>> broadcastMsg(Msg msg) async {
     await msg.wallet.initialize_wallet();
+    print(msg.wallet.sequence);
     var res = await _post('broadcast', headers: <String, String>{'content-type': 'text/plain'}, body: msg.to_hex_data());
     msg.wallet.increment_account_sequence();
 
+    print(res.load);
+    print(msg.wallet.sequence);
     res.load = List<Transaction>.generate(res.load.length, (index) => Transaction.fromJson(res.load[index]));
     return APIResponse.fromOther(res);
   }

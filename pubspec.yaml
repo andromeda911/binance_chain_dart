@@ -13,7 +13,7 @@ dependencies:
   bip39: ^1.0.3
   bip32: ^1.0.5
   pointycastle: ^1.0.2
-  bitcoin_flutter: ^2.0.1
+  secp256k1: ^0.1.1
 
 dev_dependencies:
   pedantic: ^1.9.0

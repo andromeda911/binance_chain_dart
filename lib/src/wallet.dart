@@ -8,6 +8,7 @@ import './utils/network.dart';
 import './utils/num_utils.dart';
 import './environment.dart';
 import './http_client/http_client.dart';
+import 'package:secp256k1/secp256k1.dart' as secp;
 
 class Wallet {
   String _privateKey;
@@ -78,12 +79,16 @@ class Wallet {
 
   Uint8List sign_message(Uint8List message) {
     var dsaSigner = ECDSASigner(SHA256Digest(), HMac(SHA256Digest(), 64))..init(true, PrivateKeyParameter(ECPrivateKey(BigInt.parse(privateKey, radix: 16), ECDomainParameters('secp256k1'))));
-
     ECSignature s = dsaSigner.generateSignature(message);
-
     var buffer = Uint8List(64);
+
     buffer.setRange(0, 32, encodeBigInt(s.r));
-    buffer.setRange(32, 64, encodeBigInt(s.s));
+
+    if (s.s.compareTo(ECCurve_secp256k1().n >> 1) > 0) {
+      buffer.setRange(32, 64, encodeBigInt(ECCurve_secp256k1().n - s.s));
+    } else {
+      buffer.setRange(32, 64, encodeBigInt(s.s));
+    }
     return buffer;
   }
 

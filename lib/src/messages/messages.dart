@@ -82,16 +82,14 @@ class Signature {
   }
 
   Uint8List to_bytes_json() {
-    return Uint8List.fromList(to_json().codeUnits);
+    return Uint8List.fromList(utf8.encode(to_json()));
   }
 
   Uint8List sign(Wallet wallet) {
     //generate string to sign
     var json_bytes = to_bytes_json();
-    //var json_bytes = to_bytes_json();
 
     var signed = wallet.sign_message(json_bytes);
-    //return signed;
     return signed;
   }
 }
@@ -100,7 +98,6 @@ class SignatureMsg extends Msg {
   @override
   final AMINO_MESSAGE_TYPE = '';
   Signature _signature;
-
   SignatureMsg(msg) : super(msg.wallet) {
     _signature = Signature(msg);
   }
@@ -130,7 +127,6 @@ class StdTxMsg extends Msg {
   String _data;
 
   SignatureMsg _signature;
-
   StdTxMsg(this._msg, [this._data = '']) : super(_msg.wallet) {
     _signature = SignatureMsg(_msg);
   }
