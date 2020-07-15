@@ -97,6 +97,11 @@ class Wallet {
     }
   }
 
+  void reload_account_sequence() async {
+    var account = await httpClient.getAccount(_address);
+    _sequence = account.load.sequence;
+  }
+
   String generate_order_id() {
     return '${hex.encode(decode_address(address)).toUpperCase()}-${_sequence + 1}';
   }
