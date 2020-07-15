@@ -300,19 +300,3 @@ class NewOrderMsg extends Msg {
     return pb;
   }
 }
-//Map to_map() {  return LinkedHashMap.from({    'inputs': [
-//      LinkedHashMap.from({
-//        'address': _from_address,
-//        'coins': [
-//          LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
-//        ]
-//      })
-//    ],    'outputs': [
-//      LinkedHashMap.from({
-//        'address': _to_address,
-//        'coins': [
-//          LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
-//        ]
-//      })
-//    ]  });}
-//
