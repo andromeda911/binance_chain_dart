@@ -243,14 +243,14 @@ class Transaction {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['hash'] = this.hash;
-    data['log'] = this.log;
-    data['data'] = this.data;
-    data['height'] = this.height;
-    data['code'] = this.code;
-    data['ok'] = this.ok;
-    return data;
+    return <String, dynamic>{
+      'hash': hash,
+      'log': log,
+      'data': data,
+      'height': height,
+      'code': code,
+      'ok': ok,
+    };
   }
 }
 
@@ -262,9 +262,9 @@ class TxPage {
 
   TxPage.fromJson(Map<String, dynamic> json) {
     if (json['tx'] != null) {
-      tx = new List<Tx>();
+      tx = <Tx>[];
       json['tx'].forEach((v) {
-        tx.add(new Tx.fromJson(v));
+        tx.add(Tx.fromJson(v));
       });
     }
     total = json['total'];

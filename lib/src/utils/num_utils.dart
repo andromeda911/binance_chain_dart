@@ -15,11 +15,11 @@ extension IntPower on int {
 
 /// Encode a BigInt into bytes using big-endian encoding.
 Uint8List encodeBigInt(BigInt number) {
-  var _byteMask = new BigInt.from(0xff);
-  int size = (number.bitLength + 7) >> 3;
+  var _byteMask = BigInt.from(0xff);
+  var size = (number.bitLength + 7) >> 3;
 
   var result = Uint8List(size);
-  for (int i = 0; i < size; i++) {
+  for (var i = 0; i < size; i++) {
     result[size - i - 1] = (number & _byteMask).toInt();
     number = number >> 8;
   }

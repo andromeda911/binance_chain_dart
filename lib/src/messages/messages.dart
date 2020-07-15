@@ -59,7 +59,7 @@ class Msg {
 }
 
 class Signature {
-  Msg _msg;
+  final Msg _msg;
   var _chain_id;
   var _data;
   var _source;
@@ -104,6 +104,7 @@ class SignatureMsg extends Msg {
     _signature = Signature(msg);
   }
 
+  @override
   StdSignature to_protobuf() {
     var pub_key_msg = PubKeyMsg(wallet);
     var std_sig = StdSignature()
@@ -126,13 +127,12 @@ class StdTxMsg extends Msg {
 
   final _source = BROADCAST_SOURCE;
 
-  String _data;
-  SignatureMsg get signature => _signature;
+  final String _data;
   SignatureMsg _signature;
   StdTxMsg(this._msg, [this._data = '']) : super(_msg.wallet) {
     _signature = SignatureMsg(_msg);
   }
-
+  @override
   StdTx to_protobuf() {
     var stdtx = StdTx()
       ..msgs.add(_msg.to_amino().toList())
@@ -179,7 +179,6 @@ class TransferMsg extends Msg {
   int _amountAmino;
   String _from_address;
   String _to_address;
-  String _memo;
 
   TransferMsg({
     String symbol,
@@ -192,7 +191,7 @@ class TransferMsg extends Msg {
     _amount = amount;
     _to_address = to_address;
     _wallet = wallet;
-    _memo = memo ?? '';
+    memo = memo ?? '';
     _from_address = wallet.address;
     _amountAmino = (_amount * 10.pow(8)).toInt();
   }

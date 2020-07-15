@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import '../environment.dart';
@@ -76,15 +76,15 @@ class HttpApiClient {
   }
 
   Future<APIResponse<TxPage>> getTransactions({@required String address, int blockHeight, int endTime, int limit, int offset, TxSide side, int startTime, String txAsset, TxType txType}) async {
-    final path = "transactions?address=$address"
-        "${blockHeight != null ? '&blockHeight=$blockHeight' : ''}"
-        "${endTime != null ? '&endTime=$endTime' : ''}"
-        "${limit != null ? '&limit=$limit' : ''}"
-        "${offset != null ? '&offset=$offset' : ''}"
-        "${side != null ? '&side=' + side.toString().substring(side.toString().indexOf('.') + 1) : ''}"
-        "${startTime != null ? '&startTime=$startTime' : ''}"
-        "${txAsset != null ? '&txAsset=$txAsset' : ''}"
-        "${txType != null ? '&txType=' + txType.toString().substring(txType.toString().indexOf('.') + 1) : ''}";
+    final path = 'transactions?address=$address'
+        '${blockHeight != null ? '&blockHeight=$blockHeight' : ''}'
+        '${endTime != null ? '&endTime=$endTime' : ''}'
+        '${limit != null ? '&limit=$limit' : ''}'
+        '${offset != null ? '&offset=$offset' : ''}'
+        '${side != null ? '&side=' + side.toString().substring(side.toString().indexOf('.') + 1) : ''}'
+        '${startTime != null ? '&startTime=$startTime' : ''}'
+        '${txAsset != null ? '&txAsset=$txAsset' : ''}'
+        '${txType != null ? '&txType=' + txType.toString().substring(txType.toString().indexOf('.') + 1) : ''}';
 
     var res = await _get(path);
 

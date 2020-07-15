@@ -8,7 +8,6 @@ import './utils/network.dart';
 import './utils/num_utils.dart';
 import './environment.dart';
 import './http_client/http_client.dart';
-import 'package:secp256k1/secp256k1.dart' as secp;
 
 class Wallet {
   String _privateKey;
