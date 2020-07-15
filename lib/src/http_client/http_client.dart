@@ -102,6 +102,17 @@ class HttpApiClient {
     }
     return APIResponse.fromOther(res);
   }
+
+  Future<APIResponse<List<TickerStatistics>>> getMiniTickerStats24hr({String symbol}) async {
+    final path = "mini/ticker/24hr${symbol != null ? '?symbol=$symbol' : ''}";
+    var res = await _get(path);
+    if (res.load != null) {
+      res.load = List<TickerStatistics>.generate(res.load.length, (index) => TickerStatistics.fromJson(res.load[index]));
+    } else {
+      res.load = [];
+    }
+    return APIResponse.fromOther(res);
+  }
 }
 
 class APIResponse<DataModel_T> {

@@ -390,4 +390,32 @@ class TickerStatistics {
     quoteVolume = json['quoteVolume'] ?? '0.0';
     count = json['count'] ?? 0;
   }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'symbol': symbol ?? '0.0',
+      'baseAssetName': baseAssetName ?? '0.0',
+      'quoteAssetName': quoteAssetName ?? '0.0',
+      'priceChange': priceChange ?? '0.0',
+      'priceChangePercent': priceChangePercent ?? '0.0',
+      'prevClosePrice': prevClosePrice ?? '0.0',
+      'lastPrice': lastPrice ?? '0.0',
+      'lastQuantity': lastQuantity ?? '0.0',
+      'openPrice': openPrice ?? '0.0',
+      'highPrice': highPrice ?? '0.0',
+      'lowPrice': lowPrice ?? '0.0',
+      'openTime': openTime ?? 0,
+      'closeTime': closeTime ?? 0,
+      'firstId': firstId ?? '0.0',
+      'lastId': lastId ?? '0.0',
+      'bidPrice': bidPrice ?? '0.0',
+      'bidQuantity': bidQuantity ?? '0.0',
+      'askPrice': askPrice ?? '0.0',
+      'askQuantity': askQuantity ?? '0.0',
+      'weightedAvgPrice': weightedAvgPrice ?? '0.0',
+      'volume': volume ?? '0.0',
+      'quoteVolume': quoteVolume ?? '0.0',
+      'count': count ?? 0,
+    };
+  }
 }
