@@ -97,7 +97,7 @@ class Wallet {
     }
   }
 
-  void reload_account_sequence() async {
+  Future<void> reload_account_sequence() async {
     var account = await httpClient.getAccount(_address);
     _sequence = account.load.sequence;
   }
