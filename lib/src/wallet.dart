@@ -97,6 +97,10 @@ class Wallet {
       _sequence += 1;
     }
   }
+
+  String generate_order_id() {
+    return '${hex.encode(decode_address(address)).toUpperCase()}-${_sequence + 1}';
+  }
 }
 
 bool validateAddress(String address) {

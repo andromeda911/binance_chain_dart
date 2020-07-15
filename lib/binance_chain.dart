@@ -8,3 +8,4 @@ export 'src/wallet.dart';
 export 'src/environment.dart';
 export 'src/http_client/http_client.dart';
 export 'src/http_client/response_models.dart';
+export 'src/utils/constants.dart';

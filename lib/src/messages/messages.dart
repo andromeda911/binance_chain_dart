@@ -6,6 +6,7 @@ import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:convert/convert.dart';
 
 import '../utils/num_utils.dart';
+import '../utils/constants.dart';
 import '../utils/crypto.dart';
 import '../wallet.dart';
 import './proto/gen/dex.pb.dart';
@@ -98,17 +99,18 @@ class SignatureMsg extends Msg {
   @override
   final AMINO_MESSAGE_TYPE = '';
   Signature _signature;
+  Signature get signature => _signature;
   SignatureMsg(msg) : super(msg.wallet) {
     _signature = Signature(msg);
   }
 
   StdSignature to_protobuf() {
     var pub_key_msg = PubKeyMsg(wallet);
-    var std_sig = StdSignature();
-    std_sig.sequence = fixnum.Int64(wallet.sequence);
-    std_sig.accountNumber = fixnum.Int64(wallet.accountNumber);
-    std_sig.pubKey = pub_key_msg.to_amino();
-    std_sig.signature = _signature.sign(wallet);
+    var std_sig = StdSignature()
+      ..sequence = fixnum.Int64(wallet.sequence)
+      ..accountNumber = fixnum.Int64(wallet.accountNumber)
+      ..pubKey = pub_key_msg.to_amino()
+      ..signature = _signature.sign(wallet);
     return std_sig;
   }
 }
@@ -125,19 +127,19 @@ class StdTxMsg extends Msg {
   final _source = BROADCAST_SOURCE;
 
   String _data;
-
+  SignatureMsg get signature => _signature;
   SignatureMsg _signature;
   StdTxMsg(this._msg, [this._data = '']) : super(_msg.wallet) {
     _signature = SignatureMsg(_msg);
   }
 
   StdTx to_protobuf() {
-    var stdtx = StdTx();
-    stdtx.msgs.add(_msg.to_amino().toList());
-    stdtx.signatures.add(_signature.to_amino().toList());
-    stdtx.data = _data.codeUnits;
-    stdtx.memo = _msg.memo;
-    stdtx.source = fixnum.Int64(_source);
+    var stdtx = StdTx()
+      ..msgs.add(_msg.to_amino().toList())
+      ..signatures.add(_signature.to_amino().toList())
+      ..data = _data.codeUnits
+      ..memo = _msg.memo
+      ..source = fixnum.Int64(_source);
 
     return stdtx;
   }
@@ -224,22 +226,93 @@ class TransferMsg extends Msg {
 
   @override
   Send to_protobuf() {
-    var token = Send_Token();
-    token.denom = _symbol;
-    token.amount = fixnum.Int64(_amountAmino);
+    var token = Send_Token()
+      ..denom = _symbol
+      ..amount = fixnum.Int64(_amountAmino);
 
-    var input_addr = Send_Input();
-    input_addr.address = decode_address(_from_address).toList();
-    input_addr.coins.add(token);
+    var input_addr = Send_Input()
+      ..address = decode_address(_from_address).toList()
+      ..coins.add(token);
 
-    var output_addr = Send_Output();
-    output_addr.address = decode_address(_to_address).toList();
-    output_addr.coins.add(token);
+    var output_addr = Send_Output()
+      ..address = decode_address(_to_address).toList()
+      ..coins.add(token);
 
-    var msg = Send();
-    msg.inputs.add(input_addr);
-    msg.outputs.add(output_addr);
+    var msg = Send()..inputs.add(input_addr)..outputs.add(output_addr);
 
     return msg;
   }
 }
+
+class NewOrderMsg extends Msg {
+  @override
+  final AMINO_MESSAGE_TYPE = 'CE6DC043';
+
+  String _symbol;
+  int _time_in_force;
+  int _order_type;
+  int _side;
+  double _price;
+  int _price_encoded;
+  double _quantity;
+  int _quantity_encoded;
+
+  NewOrderMsg({String symbol, TimeInForce time_in_force, OrderType order_type, OrderSide side, double price, double quantity, Wallet wallet}) : super(wallet) {
+    _symbol = symbol;
+    _time_in_force = time_in_force.value;
+    _order_type = order_type.value;
+    _side = side.value;
+    _price = price;
+    _price_encoded = (_price * 10.pow(8)).toInt();
+    _quantity = quantity;
+    _quantity_encoded = (_quantity * 10.pow(8)).toInt();
+  }
+  @override
+  Map to_map() {
+    return LinkedHashMap.from({
+      'id': _wallet.generate_order_id(),
+      'ordertype': _order_type,
+      'price': _price_encoded,
+      'quantity': _quantity_encoded,
+      'sender': _wallet.address,
+      'side': _side,
+      'symbol': _symbol,
+      'timeinforce': _time_in_force,
+    });
+  }
+
+  @override
+  Map to_sign_map() {
+    return {'order_type': _order_type, 'price': _price, 'quantity': _quantity, 'side': _side, 'symbol': _symbol, 'time_in_force': _time_in_force};
+  }
+
+  @override
+  NewOrder to_protobuf() {
+    var pb = NewOrder()
+      ..sender = decode_address(_wallet.address)
+      ..id = _wallet.generate_order_id()
+      ..symbol = _symbol
+      ..timeinforce = fixnum.Int64(_time_in_force)
+      ..ordertype = fixnum.Int64(_order_type)
+      ..side = fixnum.Int64(_side)
+      ..price = fixnum.Int64(_price_encoded)
+      ..quantity = fixnum.Int64(_quantity_encoded);
+    return pb;
+  }
+}
+//Map to_map() {  return LinkedHashMap.from({    'inputs': [
+//      LinkedHashMap.from({
+//        'address': _from_address,
+//        'coins': [
+//          LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
+//        ]
+//      })
+//    ],    'outputs': [
+//      LinkedHashMap.from({
+//        'address': _to_address,
+//        'coins': [
+//          LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
+//        ]
+//      })
+//    ]  });}
+//
