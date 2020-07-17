@@ -192,7 +192,7 @@ class Account {
       });
     }
     flags = json['flags'];
-    publicKey = json['public_key'].cast<int>();
+    publicKey = json['public_key']?.cast<int>();
     sequence = json['sequence'];
   }
 }
