@@ -118,7 +118,6 @@ class HttpApiClient {
     final path = 'tx/$txHash?format=$format';
 
     var res = await _get(path);
-    print(res.load);
     res.load = Transaction.fromJson(res.load);
     return APIResponse.fromOther(res);
   }
