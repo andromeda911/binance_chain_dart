@@ -226,10 +226,11 @@ class AccountSequence {
 class Transaction {
   String hash;
   String log;
-  String data;
+  dynamic data;
   String height;
   int code;
   bool ok;
+  dynamic tx;
 
   Transaction({this.hash, this.log, this.data, this.height, this.code, this.ok});
 
@@ -240,17 +241,11 @@ class Transaction {
     height = json['height'];
     code = json['code'];
     ok = json['ok'];
+    tx = json['tx'];
   }
 
   Map<String, dynamic> toJson() {
-    return <String, dynamic>{
-      'hash': hash,
-      'log': log,
-      'data': data,
-      'height': height,
-      'code': code,
-      'ok': ok,
-    };
+    return <String, dynamic>{'hash': hash, 'log': log, 'data': data, 'height': height, 'code': code, 'ok': ok, 'tx': tx};
   }
 }
 

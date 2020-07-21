@@ -113,6 +113,15 @@ class HttpApiClient {
     }
     return APIResponse.fromOther(res);
   }
+
+  Future<APIResponse<Transaction>> getSingleTransaction(String txHash, {String format = 'json'}) async {
+    final path = 'tx/$txHash?format=$format';
+
+    var res = await _get(path);
+    print(res.load);
+    res.load = Transaction.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
 }
 
 class APIResponse<DataModel_T> {
