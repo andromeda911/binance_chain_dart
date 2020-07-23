@@ -414,3 +414,19 @@ class TickerStatistics {
     };
   }
 }
+
+class MarketDepth {
+  List<List<double>> bids;
+  List<List<double>> asks;
+  int height;
+  bool pendingMatch;
+
+  MarketDepth({this.bids, this.asks, this.height, this.pendingMatch});
+
+  MarketDepth.fromJson(Map<String, dynamic> json) {
+    bids = List<List<double>>.from(json['bids']?.map((element) => List<double>.from(element.map((element_) => double.parse(element_))?.toList())));
+    asks = List<List<double>>.from(json['asks']?.map((element) => List<double>.from(element.map((element_) => double.parse(element_))?.toList())));
+    height = json['height'];
+    pendingMatch = json['pending_match'];
+  }
+}

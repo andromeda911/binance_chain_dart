@@ -121,6 +121,13 @@ class HttpApiClient {
     res.load = Transaction.fromJson(res.load);
     return APIResponse.fromOther(res);
   }
+
+  Future<APIResponse<MarketDepth>> getOrderBook(String marketPair) async {
+    final path = 'depth?symbol=$marketPair&limit=50';
+    var res = await _get(path);
+    res.load = MarketDepth.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
 }
 
 class APIResponse<DataModel_T> {
