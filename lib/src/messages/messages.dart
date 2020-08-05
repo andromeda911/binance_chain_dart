@@ -53,9 +53,7 @@ class Msg {
     return Uint8List.fromList(msg);
   }
 
-  String to_hex_data() {
-    return hex.encode(StdTxMsg(this).to_amino());
-  }
+  String to_hex_data() => hex.encode(StdTxMsg(this).to_amino());
 }
 
 class Signature {
@@ -70,21 +68,17 @@ class Signature {
     _source = BROADCAST_SOURCE;
   }
 
-  String to_json() {
-    return json.encode(LinkedHashMap.from({
-      'account_number': _msg.wallet.accountNumber.toString(),
-      'chain_id': _chain_id,
-      'data': _data,
-      'memo': _msg.memo,
-      'msgs': [_msg.to_map()],
-      'sequence': _msg.wallet.sequence.toString(),
-      'source': _source.toString()
-    }));
-  }
+  String to_json() => json.encode(LinkedHashMap.from({
+        'account_number': _msg.wallet.accountNumber.toString(),
+        'chain_id': _chain_id,
+        'data': _data,
+        'memo': _msg.memo,
+        'msgs': [_msg.to_map()],
+        'sequence': _msg.wallet.sequence.toString(),
+        'source': _source.toString()
+      }));
 
-  Uint8List to_bytes_json() {
-    return Uint8List.fromList(utf8.encode(to_json()));
-  }
+  Uint8List to_bytes_json() => Uint8List.fromList(utf8.encode(to_json()));
 
   Uint8List sign(Wallet wallet) {
     //generate string to sign
@@ -197,31 +191,27 @@ class TransferMsg extends Msg {
   }
 
   @override
-  Map to_map() {
-    return LinkedHashMap.from({
-      'inputs': [
-        LinkedHashMap.from({
-          'address': _from_address,
-          'coins': [
-            LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
-          ]
-        })
-      ],
-      'outputs': [
-        LinkedHashMap.from({
-          'address': _to_address,
-          'coins': [
-            LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
-          ]
-        })
-      ]
-    });
-  }
+  Map to_map() => LinkedHashMap.from({
+        'inputs': [
+          LinkedHashMap.from({
+            'address': _from_address,
+            'coins': [
+              LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
+            ]
+          })
+        ],
+        'outputs': [
+          LinkedHashMap.from({
+            'address': _to_address,
+            'coins': [
+              LinkedHashMap.from({'amount': _amountAmino, 'denom': _symbol})
+            ]
+          })
+        ]
+      });
 
   @override
-  Map to_sign_map() {
-    return {'to_address': _to_address, 'amount': _amount, 'denom': _symbol};
-  }
+  Map to_sign_map() => {'to_address': _to_address, 'amount': _amount, 'denom': _symbol};
 
   @override
   Send to_protobuf() {
@@ -267,28 +257,24 @@ class NewOrderMsg extends Msg {
     _quantity_encoded = (_quantity * 10.pow(8)).toInt();
   }
   @override
-  Map to_map() {
-    return LinkedHashMap.from({
-      'id': _wallet.generate_order_id(),
-      'ordertype': _order_type,
-      'price': _price_encoded,
-      'quantity': _quantity_encoded,
-      'sender': _wallet.address,
-      'side': _side,
-      'symbol': _symbol,
-      'timeinforce': _time_in_force,
-    });
-  }
+  Map to_map() => LinkedHashMap.from({
+        'id': _wallet.generate_order_id(),
+        'ordertype': _order_type,
+        'price': _price_encoded,
+        'quantity': _quantity_encoded,
+        'sender': _wallet.address,
+        'side': _side,
+        'symbol': _symbol,
+        'timeinforce': _time_in_force,
+      });
 
   @override
-  Map to_sign_map() {
-    return {'order_type': _order_type, 'price': _price, 'quantity': _quantity, 'side': _side, 'symbol': _symbol, 'time_in_force': _time_in_force};
-  }
+  Map to_sign_map() => {'order_type': _order_type, 'price': _price, 'quantity': _quantity, 'side': _side, 'symbol': _symbol, 'time_in_force': _time_in_force};
 
   @override
   NewOrder to_protobuf() {
     var pb = NewOrder()
-      ..sender = decode_address(_wallet.address)
+      ..sender = decode_address(_wallet.address).toList()
       ..id = _wallet.generate_order_id()
       ..symbol = _symbol
       ..timeinforce = fixnum.Int64(_time_in_force)
@@ -296,6 +282,122 @@ class NewOrderMsg extends Msg {
       ..side = fixnum.Int64(_side)
       ..price = fixnum.Int64(_price_encoded)
       ..quantity = fixnum.Int64(_quantity_encoded);
+    return pb;
+  }
+}
+
+class CancelOrderMsg extends Msg {
+  @override
+  final AMINO_MESSAGE_TYPE = '166E681B';
+  String _symbol;
+  String _order_id;
+
+  CancelOrderMsg({String symbol, String order_id, Wallet wallet}) : super(wallet) {
+    _symbol = symbol;
+    _order_id = order_id;
+  }
+
+  @override
+  Map to_map() => LinkedHashMap.from({'refid': _order_id, 'sender': wallet.address, 'symbol': _symbol});
+
+  @override
+  Map to_sign_map() => {'refid': _order_id, 'symbol': _symbol};
+
+  @override
+  CancelOrder to_protobuf() {
+    var pb = CancelOrder()
+      ..sender = decode_address(wallet.address)
+      ..refid = _order_id
+      ..symbol = _symbol;
+    return pb;
+  }
+}
+
+class FreezeMsg extends Msg {
+  @override
+  final AMINO_MESSAGE_TYPE = 'E774B32D';
+  String _symbol;
+  double _amount;
+  int _amount_encoded;
+  FreezeMsg({String symbol, double amount, Wallet wallet}) : super(wallet) {
+    _symbol = symbol;
+    _amount = amount;
+    _amount_encoded = (_amount * 10.pow(8)).toInt();
+  }
+
+  @override
+  Map to_map() => LinkedHashMap.from({'amount': _amount_encoded, 'from': wallet.address, 'symbol': _symbol});
+
+  @override
+  Map to_sign_map() => {'amount': _amount_encoded, 'symbol': _symbol};
+
+  @override
+  TokenFreeze to_protobuf() {
+    var pb = TokenFreeze()
+      ..from = decode_address(wallet.address).toList()
+      ..symbol = _symbol
+      ..amount = fixnum.Int64(_amount_encoded);
+    return pb;
+  }
+}
+
+class UnFreezeMsg extends Msg {
+  @override
+  final AMINO_MESSAGE_TYPE = '6515FF0D';
+
+  String _symbol;
+  double _amount;
+  int _amount_encoded;
+  UnFreezeMsg({String symbol, double amount, Wallet wallet}) : super(wallet) {
+    _symbol = symbol;
+    _amount = amount;
+    _amount_encoded = (_amount * 10.pow(8)).toInt();
+  }
+
+  @override
+  Map to_map() => LinkedHashMap.from({'amount': _amount_encoded, 'from': wallet.address, 'symbol': _symbol});
+
+  @override
+  Map to_sign_map() => {'amount': _amount_encoded, 'symbol': _symbol};
+
+  @override
+  TokenUnfreeze to_protobuf() {
+    var pb = TokenUnfreeze()
+      ..from = decode_address(wallet.address).toList()
+      ..symbol = _symbol
+      ..amount = fixnum.Int64(_amount_encoded);
+    return pb;
+  }
+}
+
+class VoteMsg extends Msg {
+  @override
+  final AMINO_MESSAGE_TYPE = 'A1CADD36';
+
+  int _proposal_id;
+  int _proposal_id_encoded;
+  VoteOption _vote_option;
+  String _voter;
+
+  VoteMsg(int proposal_id, VoteOption vote_option, Wallet wallet) : super(wallet) {
+    _proposal_id = proposal_id;
+    _proposal_id_encoded = (proposal_id * 10.pow(8)).toInt();
+    _vote_option = vote_option;
+    _voter = wallet == null ? null : wallet.address;
+  }
+
+  @override
+  Map to_map() => LinkedHashMap.from({'option': _vote_option.str_val, 'proposal_id': _proposal_id_encoded, 'voter': _voter});
+
+  @override
+  Map to_sign_map() => {'option': _vote_option, 'proposal_id': _proposal_id_encoded};
+
+  @override
+  Vote to_protobuf() {
+    var pb = Vote()
+      ..voter = decode_address(_wallet.address)
+      ..proposalId = fixnum.Int64(_proposal_id)
+      ..option = fixnum.Int64(_vote_option.int_val);
     return pb;
   }
 }

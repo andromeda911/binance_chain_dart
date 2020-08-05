@@ -4,7 +4,6 @@ import 'package:convert/convert.dart';
 import 'package:bip32/bip32.dart' as bip32;
 import 'package:bip39/bip39.dart' as bip39;
 import './utils/crypto.dart';
-import './utils/network.dart';
 import './utils/num_utils.dart';
 import './environment.dart';
 import './http_client/http_client.dart';
@@ -53,9 +52,7 @@ class Wallet {
 
   Wallet.fromMnemonicPhrase(String mnemonicPhrase, BinanceEnvironment env) {
     if (bip39.validateMnemonic(mnemonicPhrase)) {
-      var network = bitcoin;
-      _bip32 = bip32.BIP32.fromSeed(bip39.mnemonicToSeed(mnemonicPhrase), bip32.NetworkType(bip32: bip32.Bip32Type(public: network.bip32.public, private: network.bip32.private), wif: network.wif)).derivePath("44'/714'/0'/0/0");
-
+      _bip32 = bip32.BIP32.fromSeed(bip39.mnemonicToSeed(mnemonicPhrase)).derivePath("44'/714'/0'/0/0");
       _privateKey = hex.encode(_bip32.privateKey);
       _publicKey = hex.encode(_bip32.publicKey);
       _env = env;
@@ -80,8 +77,8 @@ class Wallet {
     var dsaSigner = ECDSASigner(SHA256Digest(), HMac(SHA256Digest(), 64))..init(true, PrivateKeyParameter(ECPrivateKey(BigInt.parse(privateKey, radix: 16), ECDomainParameters('secp256k1'))));
     ECSignature s = dsaSigner.generateSignature(message);
     var buffer = Uint8List(64);
-
-    buffer.setRange(0, 32, encodeBigInt(s.r));
+    var bi = encodeBigInt(s.r);
+    buffer.setRange(0, 32, bi);
 
     if (s.s.compareTo(ECCurve_secp256k1().n >> 1) > 0) {
       buffer.setRange(32, 64, encodeBigInt(ECCurve_secp256k1().n - s.s));
