@@ -10,15 +10,17 @@ class WebsocketBinanceListener {
 
   void _subscribe<DataModel>(String connectionJsonMessage, Function(WsBinanceMessage<DataModel> message) onMessage) {
     socket = IOWebSocketChannel.connect('${env.wssUrl}/ws');
-    socket.stream.listen((message) {
-      if (message.runtimeType == String) {
-        if (message.contains('stream')) {
-          if (onMessage != null) {
-            onMessage(WsBinanceMessage<DataModel>()..fromJson(json.decode(message)));
+    if (onMessage != null) {
+      socket.stream.listen((message) {
+        if (message.runtimeType == String) {
+          if (message.contains('stream')) {
+            if (onMessage != null) {
+              onMessage(WsBinanceMessage<DataModel>()..fromJson(json.decode(message)));
+            }
           }
         }
-      }
-    });
+      });
+    }
     socket.sink.add(connectionJsonMessage);
   }
 
