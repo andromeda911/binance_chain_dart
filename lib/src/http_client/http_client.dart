@@ -4,7 +4,7 @@ import 'package:http/http.dart';
 import 'package:meta/meta.dart';
 import '../environment.dart';
 import '../messages/messages.dart';
-import 'response_models.dart';
+import 'http_response_models.dart';
 import '../utils/constants.dart';
 
 class HttpApiClient {

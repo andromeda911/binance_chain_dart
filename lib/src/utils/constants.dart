@@ -49,3 +49,32 @@ class VoteOption {
 
 enum TxType { NEW_ORDER, ISSUE_TOKEN, BURN_TOKEN, LIST_TOKEN, CANCEL_ORDER, FREEZE_TOKEN, UN_FREEZE_TOKEN, TRANSFER, PROPOSAL, VOTE, MINT, DEPOSIT, CREATE_VALIDATOR, REMOVE_VALIDATOR, TIME_LOCK, TIME_UNLOCK, TIME_RELOCK, SET_ACCOUNT_FLAG, HTL_TRANSFER, CLAIM_HTL, DEPOSIT_HTL, REFUND_HTL }
 enum TxSide { RECEIVE, SEND }
+
+List websocketStreams = [
+  'orders',
+  'accounts',
+  'transfers',
+  'trades',
+  'marketDiff',
+  'marketDepth',
+  'kline_1m',
+  'kline_3m',
+  'kline_5m',
+  'kline_15m',
+  'kline_30m',
+  'kline_1h',
+  'kline_2h',
+  'kline_4h',
+  'kline_6h',
+  'kline_8h',
+  'kline_12h',
+  'kline_1d',
+  'kline_3d',
+  'kline_1w',
+  'kline_1M',
+  'ticker',
+  'allTickers',
+  'miniTicker',
+  'allMiniTickers',
+  'blockheight'
+];
