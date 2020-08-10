@@ -7,20 +7,22 @@ class WebsocketBinanceListener {
   IOWebSocketChannel socket;
   BinanceEnvironment env;
   WebsocketBinanceListener(this.env);
+  Stream<dynamic> stream;
 
   void _subscribe<DataModel>(String connectionJsonMessage, Function(WsBinanceMessage<DataModel> message) onMessage) {
     socket = IOWebSocketChannel.connect('${env.wssUrl}/ws');
-    if (onMessage != null) {
-      socket.stream.listen((message) {
-        if (message.runtimeType == String) {
-          if (message.contains('stream')) {
-            if (onMessage != null) {
-              onMessage(WsBinanceMessage<DataModel>()..fromJson(json.decode(message)));
-            }
+    stream = socket.stream.asBroadcastStream();
+
+    stream.listen((message) {
+      if (message.runtimeType == String) {
+        if (message.contains('stream')) {
+          if (onMessage != null) {
+            onMessage(WsBinanceMessage<DataModel>()..fromJson(json.decode(message)));
           }
         }
-      });
-    }
+      }
+    });
+
     socket.sink.add(connectionJsonMessage);
   }
 
