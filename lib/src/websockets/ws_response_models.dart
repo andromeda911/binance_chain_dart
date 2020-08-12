@@ -11,7 +11,14 @@ class WsBinanceMessage<DataModel> {
     stream = json['stream'];
     switch (stream) {
       case 'orders':
-        data = OrdersData.fromJson(json['data']) as DataModel;
+        if (json['data'] != null) {
+          var orders = <OrdersData>[];
+          json['data'].forEach((v) {
+            orders.add(OrdersData.fromJson(v));
+          });
+
+          data = orders as DataModel;
+        }
         break;
       case 'transfers':
         data = TransferData.fromJson(json['data']) as DataModel;

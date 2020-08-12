@@ -27,11 +27,11 @@ class WebsocketBinanceListener {
   }
 
   void subscribeAccountOrders(String address, {Function(WsBinanceMessage<List<OrdersData>> message) onMessage}) {
-    _subscribe(json.encode({'method': 'subscribe', 'topic': 'orders', 'address': address}), onMessage);
+    _subscribe<List<OrdersData>>(json.encode({'method': 'subscribe', 'topic': 'orders', 'address': address}), onMessage);
   }
 
   void subscribeAccoutTransfers(String address, {Function(WsBinanceMessage<TransferData> message) onMessage}) {
-    _subscribe(json.encode({'method': 'subscribe', 'topic': 'transfers', 'address': address}), onMessage);
+    _subscribe<TransferData>(json.encode({'method': 'subscribe', 'topic': 'transfers', 'address': address}), onMessage);
   }
 
   void subscribeOrderBook(String marketPairSymbol, {Function(WsBinanceMessage<MarketDepthData> message) onMessage}) {
