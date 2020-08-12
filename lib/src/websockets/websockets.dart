@@ -26,7 +26,7 @@ class WebsocketBinanceListener {
     socket.sink.add(connectionJsonMessage);
   }
 
-  void subscribeAccountOrders(String address, {Function(WsBinanceMessage<OrdersData> message) onMessage}) {
+  void subscribeAccountOrders(String address, {Function(WsBinanceMessage<List<OrdersData>> message) onMessage}) {
     _subscribe(json.encode({'method': 'subscribe', 'topic': 'orders', 'address': address}), onMessage);
   }
 
