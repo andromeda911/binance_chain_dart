@@ -129,6 +129,74 @@ class HttpApiClient {
     res.load = MarketDepth.fromJson(res.load);
     return APIResponse.fromOther(res);
   }
+
+  Future<APIResponse<Order>> getOrder(String orderID) async {
+    final path = 'orders/$orderID';
+    var res = await _get(path);
+    res.load = Order.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
+
+  Future<APIResponse<OrderList>> getOpenOrders({@required String address, int limit, int offset, String symbol, int total}) async {
+    final path = 'orders/open?address=$address';
+    '${limit != null ? '&limit=$limit' : ''}'
+        '${offset != null ? '&offset=$offset' : ''}'
+        '${symbol != null ? '&symbol=$symbol' : ''}'
+        '${total != null ? '&total=$total' : ''}';
+
+    var res = await _get(path);
+    res.load = OrderList.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
+
+  Future<APIResponse<OrderList>> getClosedOrders({@required String address, int endTime, int limit, int offset, OrderSide side, int startTime, String symbol, int total}) async {
+    final path = 'orders/closed?address=$address'
+        '${endTime != null ? '&end=$endTime' : ''}'
+        '${limit != null ? '&limit=$limit' : ''}'
+        '${offset != null ? '&offset=$offset' : ''}'
+        '${side != null ? '&side=' + side.value.toString() : ''}'
+        '${startTime != null ? '&start=$startTime' : ''}'
+        '${symbol != null ? '&symbol=$symbol' : ''}'
+        '${total != null ? '&total=$total' : ''}';
+
+    var res = await _get(path);
+    res.load = OrderList.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
+
+  Future<APIResponse<Order>> getOrderMini(String orderID) async {
+    final path = 'mini/orders/$orderID';
+    var res = await _get(path);
+    res.load = Order.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
+
+  Future<APIResponse<OrderList>> getOpenOrdersMini({@required String address, int limit, int offset, String symbol, int total}) async {
+    final path = 'mini/orders/open?address=$address';
+    '${limit != null ? '&limit=$limit' : ''}'
+        '${offset != null ? '&offset=$offset' : ''}'
+        '${symbol != null ? '&symbol=$symbol' : ''}'
+        '${total != null ? '&total=$total' : ''}';
+
+    var res = await _get(path);
+    res.load = OrderList.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
+
+  Future<APIResponse<OrderList>> getClosedOrdersMini({@required String address, int endTime, int limit, int offset, OrderSide side, int startTime, String symbol, int total}) async {
+    final path = 'mini/orders/closed?address=$address'
+        '${endTime != null ? '&end=$endTime' : ''}'
+        '${limit != null ? '&limit=$limit' : ''}'
+        '${offset != null ? '&offset=$offset' : ''}'
+        '${side != null ? '&side=' + side.value.toString() : ''}'
+        '${startTime != null ? '&start=$startTime' : ''}'
+        '${symbol != null ? '&symbol=$symbol' : ''}'
+        '${total != null ? '&total=$total' : ''}';
+
+    var res = await _get(path);
+    res.load = OrderList.fromJson(res.load);
+    return APIResponse.fromOther(res);
+  }
 }
 
 class APIResponse<DataModel_T> {

@@ -430,3 +430,62 @@ class MarketDepth {
     pendingMatch = json['pending_match'];
   }
 }
+
+class OrderList {
+  List<Order> order;
+  int total;
+
+  OrderList({this.order, this.total});
+
+  OrderList.fromJson(Map<String, dynamic> json) {
+    if (json['order'] != null) {
+      order = List<Order>();
+      json['order'].forEach((v) {
+        order.add(Order.fromJson(v));
+      });
+    }
+    total = json['total'];
+  }
+}
+
+class Order {
+  String orderId;
+  String symbol;
+  String owner;
+  String price;
+  String quantity;
+  String cumulateQuantity;
+  String fee;
+  String orderCreateTime;
+  String transactionTime;
+  String status;
+  int timeInForce;
+  int side;
+  int type;
+  String tradeId;
+  String lastExecutedPrice;
+  String lastExecutedQuantity;
+  String transactionHash;
+
+  Order({this.orderId, this.symbol, this.owner, this.price, this.quantity, this.cumulateQuantity, this.fee, this.orderCreateTime, this.transactionTime, this.status, this.timeInForce, this.side, this.type, this.tradeId, this.lastExecutedPrice, this.lastExecutedQuantity, this.transactionHash});
+
+  Order.fromJson(Map<String, dynamic> json) {
+    orderId = json['orderId'];
+    symbol = json['symbol'];
+    owner = json['owner'];
+    price = json['price'];
+    quantity = json['quantity'];
+    cumulateQuantity = json['cumulateQuantity'];
+    fee = json['fee'];
+    orderCreateTime = json['orderCreateTime'];
+    transactionTime = json['transactionTime'];
+    status = json['status'];
+    timeInForce = json['timeInForce'];
+    side = json['side'];
+    type = json['type'];
+    tradeId = json['tradeId'];
+    lastExecutedPrice = json['lastExecutedPrice'];
+    lastExecutedQuantity = json['lastExecutedQuantity'];
+    transactionHash = json['transactionHash'];
+  }
+}
