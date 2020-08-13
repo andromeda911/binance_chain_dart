@@ -26,7 +26,10 @@ class WsBinanceMessage<DataModel> {
       case 'marketDepth':
         data = MarketDepthData.fromJson(json['data']) as DataModel;
         break;
+      case 'accounts':
+        data = AccountData.fromJson(json['data']) as DataModel;
 
+        break;
       default:
         data = null;
     }
@@ -51,9 +54,9 @@ class TransferData {
     memo = json['M'];
     from = json['f'];
     if (json['t'] != null) {
-      to = new List<To>();
+      to = List<To>();
       json['t'].forEach((v) {
-        to.add(new To.fromJson(v));
+        to.add(To.fromJson(v));
       });
     }
   }
@@ -68,9 +71,9 @@ class To {
   To.fromJson(Map<String, dynamic> json) {
     toAddr = json['o'];
     if (json['c'] != null) {
-      coins = new List<Coins>();
+      coins = List<Coins>();
       json['c'].forEach((v) {
-        coins.add(new Coins.fromJson(v));
+        coins.add(Coins.fromJson(v));
       });
     }
   }
@@ -166,3 +169,40 @@ class OrdersData {
     orderCreationTime = json['O'];
   }
 }
+
+///////////////////////////////////////////////////////////////
+class AccountData {
+  String eventType;
+  int eventHeight;
+  List<BalanceData> balances;
+
+  AccountData({this.eventType, this.eventHeight, this.balances});
+
+  AccountData.fromJson(Map<String, dynamic> json) {
+    eventType = json['e'];
+    eventHeight = json['E'];
+    if (json['B'] != null) {
+      balances = List<BalanceData>();
+      json['B'].forEach((v) {
+        balances.add(BalanceData.fromJson(v));
+      });
+    }
+  }
+}
+
+class BalanceData {
+  String asset;
+  String free;
+  String locked;
+  String frozen;
+
+  BalanceData({this.asset, this.free, this.locked, this.frozen});
+
+  BalanceData.fromJson(Map<String, dynamic> json) {
+    asset = json['a'];
+    free = json['f'];
+    locked = json['l'];
+    frozen = json['r'];
+  }
+}
+////////////////////////////////////////////////////////////////////
