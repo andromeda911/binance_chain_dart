@@ -489,3 +489,29 @@ class Order {
     transactionHash = json['transactionHash'];
   }
 }
+
+class Candlestick {
+  int openTime;
+  double open;
+  double high;
+  double low;
+  double close;
+  double volume;
+  int closeTime;
+  double quoteAssetVolume;
+  int numberOfTrades;
+
+  Candlestick({this.openTime, this.open, this.high, this.low, this.close, this.volume, this.closeTime, this.quoteAssetVolume, this.numberOfTrades});
+
+  Candlestick.fromJson(List data) {
+    openTime = data[0];
+    open = double.parse(data[1]);
+    high = double.parse(data[2]);
+    low = double.parse(data[3]);
+    close = double.parse(data[4]);
+    volume = double.parse(data[5]);
+    closeTime = data[6];
+    quoteAssetVolume = double.parse(data[7]);
+    numberOfTrades = data[8];
+  }
+}

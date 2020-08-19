@@ -197,6 +197,19 @@ class HttpApiClient {
     res.load = OrderList.fromJson(res.load);
     return APIResponse.fromOther(res);
   }
+
+  Future<APIResponse<List<Candlestick>>> getCandlestickBarsMini({@required String symbol, CandlestickInterval interval = CandlestickInterval.INTERVAL_1h, int limit, int startTime, int endTime}) async {
+    final path = 'mini/klines?symbol=$symbol'
+        '&interval=${interval.toString().split('_')[1]}'
+        '${limit != null ? '&limit=' + interval.toString().split('_')[1] : ''}'
+        '${startTime != null ? '&start=$startTime' : ''}'
+        '${endTime != null ? '&end=$endTime' : ''}';
+
+    var res = await _get(path);
+
+    res.load = List.generate(res.load?.length, (index) => Candlestick.fromJson(res.load[index]));
+    return APIResponse.fromOther(res);
+  }
 }
 
 class APIResponse<DataModel_T> {
