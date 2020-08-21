@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:binance_chain/binance_chain.dart';
 import 'package:binance_chain/src/websockets/ws_response_models.dart';
@@ -8,7 +9,7 @@ class WebsocketBinanceListener {
   BinanceEnvironment env;
   WebsocketBinanceListener(this.env);
   Stream<dynamic> stream;
-
+  Timer _keepAliveTimer;
   void _subscribe<DataModel>(String connectionJsonMessage, Function(WsBinanceMessage<DataModel> message) onMessage) {
     socket = IOWebSocketChannel.connect('${env.wssUrl}/ws');
     stream = socket.stream.asBroadcastStream();
@@ -24,6 +25,10 @@ class WebsocketBinanceListener {
     });
 
     socket.sink.add(connectionJsonMessage);
+    _keepAliveTimer ?? _keepAliveTimer.cancel();
+    _keepAliveTimer = Timer.periodic(Duration(minutes: 30), (timer) {
+      socket.sink.add(json.encode({'method': 'keepAlive'}));
+    });
   }
 
   void subscribeAccountUpdates(String address, {Function(WsBinanceMessage<AccountData> message) onMessage}) {
