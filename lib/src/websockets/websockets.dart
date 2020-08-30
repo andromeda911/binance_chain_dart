@@ -26,7 +26,7 @@ class WebsocketBinanceListener {
 
     socket.sink.add(connectionJsonMessage);
     _keepAliveTimer?.cancel();
-    _keepAliveTimer = Timer.periodic(Duration(minutes: 30), (timer) {
+    _keepAliveTimer = Timer.periodic(Duration(minutes: 25), (timer) {
       socket.sink.add(json.encode({'method': 'keepAlive'}));
     });
   }
