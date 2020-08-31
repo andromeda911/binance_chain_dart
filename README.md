@@ -10,6 +10,7 @@ Most of the classes are ports from [python-binance-chain](https://github.com/sam
 * Wallet creation from private key or mnemonic phrase
 * Wallet handling account sequence for transactions
 * Helper classes for handling responses from Binance API. Data models are presented as classes that parse the JSON from responses
+* Using the "[Decimal](https://pub.dev/packages/decimal)" library for a more accurate representation of amounts when sending transactions.
 * 100% Flutter compatibility
 * 100% Dart native
 
