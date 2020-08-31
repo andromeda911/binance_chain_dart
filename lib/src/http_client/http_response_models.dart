@@ -1,3 +1,4 @@
+/// Read more: [HTTP API ``Error`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#error)
 class Error {
   int code;
   String message;
@@ -5,6 +6,7 @@ class Error {
   Error({this.code, this.message});
 }
 
+/// Read more: [HTTP API ``Times`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#times)
 class Times {
   String ap_time;
   String block_time;
@@ -17,6 +19,7 @@ class Times {
   }
 }
 
+/// Read more: [HTTP API ``Validators`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#validators)
 class Validator {
   String address;
   List<int> pub_key;
@@ -33,6 +36,7 @@ class Validator {
   }
 }
 
+/// Read more: [HTTP API ``Validator`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#validator)
 class Validators {
   int blockHeight;
   List<Validator> validators;
@@ -47,6 +51,7 @@ class Validators {
   }
 }
 
+/// Read more: [HTTP API ``Peer`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#peer)
 class Peer {
   bool accelerated;
   String accessAddr;
@@ -75,6 +80,7 @@ class Peer {
   }
 }
 
+/// Read more: [HTTP API ``NodeInfo`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#nodeinfo)
 class NodeInfo {
   ProtocolVersion protocolVersion;
   String id;
@@ -100,6 +106,7 @@ class NodeInfo {
   }
 }
 
+/// Read more: [HTTP API ``ProtocolVersion`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#protocolversion)
 class ProtocolVersion {
   int p2p;
   int block;
@@ -126,6 +133,7 @@ class Other {
   }
 }
 
+/// Read more: [HTTP API ``SyncInfo`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#syncinfo)
 class SyncInfo {
   String latestBlockHash;
   String latestAppHash;
@@ -144,6 +152,7 @@ class SyncInfo {
   }
 }
 
+/// Read more: [HTTP API ``ValidatorInfo`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#validatorinfo)
 class ValidatorInfo {
   String address;
   List<int> pubKey;
@@ -158,6 +167,7 @@ class ValidatorInfo {
   }
 }
 
+/// Read more: [HTTP API ``ResultStatus`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#resultstatus)
 class ResultStatus {
   NodeInfo nodeInfo;
   SyncInfo syncInfo;
@@ -172,6 +182,7 @@ class ResultStatus {
   }
 }
 
+/// Read more: [HTTP API ``Account`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#account)
 class Account {
   int accountNumber;
   String address;
@@ -197,6 +208,7 @@ class Account {
   }
 }
 
+/// Read more: [HTTP API ``Balance`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#balance)
 class Balance {
   String free;
   String frozen;
@@ -213,6 +225,7 @@ class Balance {
   }
 }
 
+/// Read more: [HTTP API ``AccountSequence`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#accountsequence)
 class AccountSequence {
   int sequence;
 
@@ -223,6 +236,7 @@ class AccountSequence {
   }
 }
 
+/// Read more: [HTTP API ``Transaction`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#transaction)
 class Transaction {
   String hash;
   String log;
@@ -249,6 +263,7 @@ class Transaction {
   }
 }
 
+/// Read more: [HTTP API ``TxPage`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#txpage)
 class TxPage {
   List<Tx> tx;
   int total;
@@ -266,6 +281,7 @@ class TxPage {
   }
 }
 
+/// Read more: [HTTP API ``Tx`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#tx)
 class Tx {
   String txHash;
   int blockHeight;
@@ -310,6 +326,7 @@ class Tx {
   }
 }
 
+/// Read more: [HTTP API ``TickerStatistics`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#tickerstatistics)
 class TickerStatistics {
   String symbol;
   String baseAssetName;
@@ -415,6 +432,7 @@ class TickerStatistics {
   }
 }
 
+/// Read more: [HTTP API ``MarketDepth`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#marketdepth)
 class MarketDepth {
   List<List<double>> bids;
   List<List<double>> asks;
@@ -431,6 +449,7 @@ class MarketDepth {
   }
 }
 
+/// Read more: [HTTP API ``OrderList`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#orderlist)
 class OrderList {
   List<Order> order;
   int total;
@@ -448,6 +467,7 @@ class OrderList {
   }
 }
 
+/// Read more: [HTTP API ``Order`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#order)
 class Order {
   String orderId;
   String symbol;
@@ -490,6 +510,7 @@ class Order {
   }
 }
 
+/// Read more: [HTTP API ``Candlestick`` data model](https://docs.binance.org/api-reference/dex-api/paths.html#candlestick)
 class Candlestick {
   int openTime;
   double open;

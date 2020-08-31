@@ -21,14 +21,40 @@ class Wallet {
 
   BinanceEnvironment get env => _env;
 
+  /// Binance account address.
+  ///
+  /// Typically, an address is encoded in the bech32 format which includes a checksum and human-readable prefix (HRP).
+  ///
+  /// Example:
+  ///
+  /// ``bnb1ultyhpw2p2ktvr68swz56570lgj2rdsadq3ym2`` for mainnet (42 characters)
+  ///
+  /// ``tbnb1l9ffdr8e2pk7h4agvhwcslh2urwpuhqm2u82hy`` for testnet (43 characters)
+  ///
+  /// where HRP is ``bnb1`` and ``tbnb``.
+  ///
+  /// Read more: [Binance Chain Docs / blockchain / address](https://docs.binance.org/blockchain.html#address)
   String get address => _address;
 
+  /// The Sequence Number is the way how Binance Chain prevents Replay Attack
+  /// (the idea is borrowed from Cosmos network, but varies a bit in handling).
+  ///
+  /// Every transaction should have a new Sequence Number increased by 1 from the
+  /// current latest sequence number of the Account, and after this transaction is
+  /// recorded on the block chain, the Sequence Number will be set to the same number
+  /// as the one of latest transaction.
+  ///
+  /// Read more: [Binance Chain Docs / chain access / account](https://docs.binance.org/chain-access.html#account-and-sequence-number)
   int get sequence => _sequence;
 
+  /// Private key in hex.
   String get privateKey => _privateKey;
 
+  /// Public key in hex.
   String get publicKey => _publicKey;
 
+  /// An internal identifier for the account in Binance.
+  /// Read more: [Binance Chain Docs / chain access / account](https://docs.binance.org/chain-access.html#account-and-sequence-number)
   int get accountNumber => _accountNumber;
 
   String get chainId => _chain_id;
@@ -38,6 +64,7 @@ class Wallet {
     return _httpClient;
   }
 
+  /// Create wallet object from private key in hex.
   Wallet(String privateKey, BinanceEnvironment env) {
     if (privateKey.isNotEmpty) {
       _privateKey = privateKey;
@@ -50,6 +77,7 @@ class Wallet {
     }
   }
 
+  /// Create wallet object from mnemonic phrase 12-24 words.
   Wallet.fromMnemonicPhrase(String mnemonicPhrase, BinanceEnvironment env) {
     if (bip39.validateMnemonic(mnemonicPhrase)) {
       _bip32 = bip32.BIP32.fromSeed(bip39.mnemonicToSeed(mnemonicPhrase)).derivePath("44'/714'/0'/0/0");
@@ -62,6 +90,7 @@ class Wallet {
     }
   }
 
+  /// Load ``accountNumber``, ``chainId`` and ``sequence`` using HTTP request
   void initialize_wallet() async {
     if (_accountNumber == null) {
       var account = await httpClient.getAccount(_address);
@@ -73,6 +102,7 @@ class Wallet {
     }
   }
 
+  /// Sign message using secp256k1
   Uint8List sign_message(Uint8List message) {
     var dsaSigner = ECDSASigner(SHA256Digest(), HMac(SHA256Digest(), 64))..init(true, PrivateKeyParameter(ECPrivateKey(BigInt.parse(privateKey, radix: 16), ECDomainParameters('secp256k1'))));
     ECSignature s = dsaSigner.generateSignature(message);
@@ -99,6 +129,7 @@ class Wallet {
     _sequence = account.load.sequence;
   }
 
+  /// read more: [Binance Chain Docs / encoding / orderID](https://docs.binance.org/encoding.html#order-id)
   String generate_order_id() {
     return '${hex.encode(decode_address(address)).toUpperCase()}-${_sequence + 1}';
   }
