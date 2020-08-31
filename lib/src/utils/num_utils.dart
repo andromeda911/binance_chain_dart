@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'dart:math' as math;
 
-extension IoublePower on double {
+extension DoublePower on double {
   double pow(int power) {
     return math.pow(this, power);
   }

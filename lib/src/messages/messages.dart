@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:decimal/decimal.dart';
 import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:convert/convert.dart';
 
@@ -169,14 +170,14 @@ class TransferMsg extends Msg {
   final AMINO_MESSAGE_TYPE = '2A2C87FA';
 
   String _symbol;
-  double _amount;
+  Decimal _amount;
   int _amountAmino;
   String _from_address;
   String _to_address;
 
   TransferMsg({
     String symbol,
-    double amount,
+    Decimal amount,
     String to_address,
     String memo,
     Wallet wallet,
@@ -187,7 +188,7 @@ class TransferMsg extends Msg {
     _wallet = wallet;
     memo = memo ?? '';
     _from_address = wallet.address;
-    _amountAmino = (_amount * 10.pow(8)).toInt();
+    _amountAmino = (_amount * Decimal.fromInt(10.pow(8))).toInt();
   }
 
   @override
@@ -241,20 +242,20 @@ class NewOrderMsg extends Msg {
   int _time_in_force;
   int _order_type;
   int _side;
-  double _price;
+  Decimal _price;
   int _price_encoded;
-  double _quantity;
+  Decimal _quantity;
   int _quantity_encoded;
 
-  NewOrderMsg({String symbol, TimeInForce time_in_force, OrderType order_type, OrderSide side, double price, double quantity, Wallet wallet}) : super(wallet) {
+  NewOrderMsg({String symbol, TimeInForce time_in_force, OrderType order_type, OrderSide side, Decimal price, Decimal quantity, Wallet wallet}) : super(wallet) {
     _symbol = symbol;
     _time_in_force = time_in_force.value;
     _order_type = order_type.value;
     _side = side.value;
     _price = price;
-    _price_encoded = (_price * 10.pow(8)).toInt();
+    _price_encoded = (_price * Decimal.fromInt(10.pow(8))).toInt();
     _quantity = quantity;
-    _quantity_encoded = (_quantity * 10.pow(8)).toInt();
+    _quantity_encoded = (_quantity * Decimal.fromInt(10.pow(8))).toInt();
   }
   @override
   Map to_map() => LinkedHashMap.from({
@@ -317,12 +318,12 @@ class FreezeMsg extends Msg {
   @override
   final AMINO_MESSAGE_TYPE = 'E774B32D';
   String _symbol;
-  double _amount;
+  Decimal _amount;
   int _amount_encoded;
-  FreezeMsg({String symbol, double amount, Wallet wallet}) : super(wallet) {
+  FreezeMsg({String symbol, Decimal amount, Wallet wallet}) : super(wallet) {
     _symbol = symbol;
     _amount = amount;
-    _amount_encoded = (_amount * 10.pow(8)).toInt();
+    _amount_encoded = (_amount * Decimal.fromInt(10.pow(8))).toInt();
   }
 
   @override
@@ -346,12 +347,12 @@ class UnFreezeMsg extends Msg {
   final AMINO_MESSAGE_TYPE = '6515FF0D';
 
   String _symbol;
-  double _amount;
+  Decimal _amount;
   int _amount_encoded;
-  UnFreezeMsg({String symbol, double amount, Wallet wallet}) : super(wallet) {
+  UnFreezeMsg({String symbol, Decimal amount, Wallet wallet}) : super(wallet) {
     _symbol = symbol;
     _amount = amount;
-    _amount_encoded = (_amount * 10.pow(8)).toInt();
+    _amount_encoded = (_amount * Decimal.fromInt(10.pow(8))).toInt();
   }
 
   @override
