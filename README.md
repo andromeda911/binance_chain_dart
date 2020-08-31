@@ -30,7 +30,7 @@ import 'package:binance_chain/binance_chain.dart';
 main() async {
   //
   var testnetEnv = BinanceEnvironment.getTestnetEnv();
-  var httpClient = HttpApiClient(env: env);
+  var httpClient = HttpApiClient(env: testnetEnv);
   
   // create wallet from mnemonic phrase
   var wallet = Wallet.fromMnemonicPhrase('mnemonic phrase 12-24 words', testnetEnv)
