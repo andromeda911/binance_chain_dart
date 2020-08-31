@@ -1,4 +1,4 @@
-binance_chain_dart
+## binance_chain_dart
 
 This is unofficial Dart wrapper for the [Binance Chain API](https://docs.binance.org/api-reference/dex-api/paths.html "Binance Chain API").
 Most of the classes are ports from [python-binance-chain](https://github.com/sammchardy/python-binance-chain) and [Binance Chain Java SDK](https://github.com/binance-chain/java-sdk)
